@@ -43,19 +43,19 @@ const chartx = {
   /**
    * Init logic for chartx
    */
-  init: () => {
+  init: async () => {
     // Create store for all states
-    chartx.store = createStore(combineReducer(reducerMap))
+    chartx.store = await createStore(combineReducer(reducerMap))
 
     // Static function for all charts
     Chart.dispatch = chartx.store.dispatch
   },
 
-  createChart: (chartConfig) => {
+  createChart: async (chartConfig) => {
     if (!chartx.store) {
       // This is the first chart chartx ever created.
       // Need to init it first
-      chartx.init()
+      await chartx.init()
     }
 
     return new Chart(chartConfig)

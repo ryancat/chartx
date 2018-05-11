@@ -1,6 +1,6 @@
 import uuidv1 from 'uuid/v1'
 
-import { chartInit } from './actions/chartAction'
+import { chartInit, chartLayoutUpdate } from './actions/chartAction'
 // import {combineReducer, createReducer} from './stateManager'
 // import dataReducer from './reducers/dataReducer'
 // import frsReducer from './reducers/frsReducer'
@@ -28,9 +28,17 @@ export default class Chart {
     // Each chart instance should have a unique id to track in state
     this.id = uuidv1()
     this.element = document.createElement('div')
+    this.chartConfig = chartConfig
 
+    this.init()
+  }
+
+  async init () {
     // Indicate the chart has initialized
-    Chart.dispatch(chartInit(this.id, chartConfig))
+    await Chart.dispatch(chartInit(this.id, this.chartConfig))
+
+    // Calculate the chart dimensions for layout
+    Chart.dispatch(chartLayoutUpdate(this.id))
   }
 }
 

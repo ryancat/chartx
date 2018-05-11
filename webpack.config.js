@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path'),
+      webpack = require('webpack')
 
 module.exports = {
   entry: {
@@ -10,7 +11,13 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },
-
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'code': JSON.stringify(process.NODE_ENV || 'DEV')
+      }
+    })
+  ],
   module: {
     rules: [{
       test: /\.js$/,

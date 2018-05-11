@@ -24,6 +24,7 @@ export default (state = defaultState, action) => {
       })
 
     case CHART_LAYOUT_UPDATE:
+      console.log('CHART_LAYOUT_UPDATE', state, action)
       // We need to calculate the chart component dimensions
       // to prepare for rendering
       return produce(state, (draftState) => {

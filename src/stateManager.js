@@ -7,9 +7,9 @@ import util from './util'
  * @param {Function} reducer The (combined) reducer which takes 
  * current state and action then returns new state
  */
-export function createStore (reducer) {
+export async function createStore (reducer) {
   // Init state come from reducer
-  let state = reducer()
+  let state = await reducer()
 
   return {
     // The async reducer map used to add async reducers into store
@@ -35,6 +35,11 @@ export function createStore (reducer) {
         console.info('%cafter:', 'color: green', state)
         console.groupEnd()
       }
+
+      // Return the state once it's finish updating
+      // TODO: should we return state here? maybe not as this will expose
+      // state and it may subject to be modified!
+      // return state
     },
     // /**
     //  * Replace the reducer for store to a different one
