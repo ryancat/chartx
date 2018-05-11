@@ -5,7 +5,7 @@ class BackgroundLayer extends Layer {
   /**
    * 
    * @param {Object} props background layer config props
-   * @param {Enum.renderer} props.renderer background layer config props
+   * @param {Enum.rendererType} props.rendererType background layer config props
    */
   constructor (props) {
     super()

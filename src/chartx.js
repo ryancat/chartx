@@ -6,6 +6,7 @@ import uuidv1 from 'uuid/v1'
 import reducerMap from './reducers/index'
 import {combineReducer, createStore, createReducer} from './stateManager'
 import Chart from './Chart'
+import enums from './enums/index'
 
 let _store, // The store for all charts state
     _chartMap = {} // chart map to quickly find chart
@@ -36,6 +37,8 @@ function _loop (lastTimestamp) {
 }
 
 const chartx = {
+
+  enums,
 
   /**
    * Init logic for chartx

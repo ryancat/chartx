@@ -1,4 +1,4 @@
-import renderer from '../../enums/renderer'
+import renderer from '../../enums/rendererType'
 import canvasRenderer from '../../renderers/canvasRenderer'
 
 class Layer {
@@ -6,10 +6,12 @@ class Layer {
     const {
       width, 
       height,
-      renderer
+      rendererType
     } = props
 
-    switch (renderer) {
+    switch (rendererType) {
+      case renderer.CANVAS:
+        this.renderer = canvasRenderer
       default:
         this.renderer = canvasRenderer
     }

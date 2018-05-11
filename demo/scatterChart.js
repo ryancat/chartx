@@ -1,27 +1,35 @@
 import chartx from '../src/chartx'
 
-const chartContainer = document.getElementById('root')
+const {
+  dataType,
+  aspectType
+} = chartx.enums
 
 // The config required to render a chart
 const chartConfig = {
   // Title is used on the top of chart as the chart title
   title: 'Demo chart',
   // Aspects are data and their configuration for each aspect of chart
-  asepcts: [
+  aspects: [
     {
-      aspect: 'x',
+      aspect: aspectType.X,
       title: 'Shoes',
-      values: ['Vans', 'Vans', 'Adidas', 'Adidas', 'Nike', 'Nike']
+      dataType: dataType.STRING,
+      values: ['Vans', 'Vans', 'Adidas', 'Adidas', 'Nike', 'Nike'],
+      valueOrder: ['Vans', 'Adidas', 'Nike']
     },
     {
-      aspect: 'y',
+      aspect: aspectType.Y,
       title: 'Number sold',
+      dataType: dataType.NUMBER,
       values: [100, 30, 67, 103, 10, 150]
     },
     {
-      aspect: 'color',
+      aspect: aspectType.COLOR,
       title: 'Sex',
-      values: ['Male', 'Female', 'Male', 'Female', 'Male', 'Female']
+      dataType: dataType.STRING,
+      values: ['Male', 'Female', 'Male', 'Female', 'Male', 'Female'],
+      valueOrder: ['Male', 'Female']
     }
   ],
   // The outer width of chart
