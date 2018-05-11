@@ -39,7 +39,7 @@ export async function createStore (reducer) {
       // Return the state once it's finish updating
       // TODO: should we return state here? maybe not as this will expose
       // state and it may subject to be modified!
-      // return state
+      return state
     },
     // /**
     //  * Replace the reducer for store to a different one

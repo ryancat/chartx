@@ -2,7 +2,8 @@ import chartx from '../src/chartx'
 
 const {
   dataType,
-  aspectType
+  aspectType,
+  markType
 } = chartx.enums
 
 // The config required to render a chart
@@ -22,7 +23,8 @@ const chartConfig = {
       aspect: aspectType.Y,
       title: 'Number sold',
       dataType: dataType.NUMBER,
-      values: [100, 30, 67, 103, 10, 150]
+      values: [100, 30, 67, 103, 10, 150],
+      markType: markType.DOT
     },
     {
       aspect: aspectType.COLOR,

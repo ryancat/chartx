@@ -35,10 +35,18 @@ export default class Chart {
 
   async init () {
     // Indicate the chart has initialized
-    await Chart.dispatch(chartInit(this.id, this.chartConfig))
+    const store = await Chart.dispatch(chartInit(this.id, this.chartConfig))
 
     // Calculate the chart dimensions for layout
-    Chart.dispatch(chartLayoutUpdate(this.id))
+    // TODO directly access store maybe not a good idea,
+    // Need to think how to optimize here. This is really just
+    // like a container
+    Chart.dispatch(chartLayoutUpdate(this.id, {
+      xAxisHeight: store.xAxis.height,
+      yAxisWidth: store.yAxis.width,
+      chartHeight: store.chart.height,
+      chartWidth: store.chart.width
+    }))
   }
 }
 

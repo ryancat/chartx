@@ -7,7 +7,8 @@ export const chartInit = (chartId, chartConfig) => ({
   chartConfig
 })
 
-export const chartLayoutUpdate = (chartId) => ({
+export const chartLayoutUpdate = (chartId, chartDimensions) => ({
   type: CHART_LAYOUT_UPDATE,
-  chartId
+  chartId,
+  chartDimensions
 })

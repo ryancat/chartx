@@ -1,7 +1,9 @@
 import produce from 'immer'
 import _ from 'lodash'
 
-import dataType from '../enums/dataType'
+import dataTypeE from '../enums/dataType'
+import aspectTypeE from '../enums/aspectType'
+import theme from '../theme'
 
 export default {
   chartInit: (state, action) => {
@@ -20,13 +22,20 @@ export default {
       // Set title
       draftState.title = aspect.title
 
+      // Set values and value order
+      draftState.values = aspect.values
+      if (aspect.valueOrder) {
+        // Only categorical dimensions have value order
+        draftState.valueOrder = aspect.valueOrder
+      }
+
       // Agregate aspect values
       switch(aspect.dataType) {
-        case dataType.STRING:
+        case dataTypeE.STRING:
           draftState.tickCount = aspect.valueOrder.length
           break
 
-        case dataType.NUMBER:
+        case dataTypeE.NUMBER:
           draftState.min = _.min(aspect.values)
           draftState.max = _.max(aspect.values)
 
@@ -38,7 +47,24 @@ export default {
           break
 
         default:
-          console.warn(`Unexpected data type on ${aspectType} aspect`, aspect.dataType)
+          console.warn(`Unexpected data type on ${aspectType} aspect: ${aspect.dataType}`)
+      }
+
+      // Calculate dimension information
+      const axisTheme = theme.axis,
+            axisSize = axisTheme.title.fontSize + axisTheme.label.fontSize + axisTheme.extraSpace
+
+      switch (aspectType) {
+        case aspectTypeE.X:
+          draftState.height = axisSize
+          break
+        
+        case aspectTypeE.Y:
+          draftState.width = axisSize
+          break
+
+        default:
+        console.warn(`Unexpected aspect type: ${aspect.dataType}`)
       }
     })
   }
