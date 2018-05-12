@@ -15,22 +15,76 @@ export default class CanvasRenderer extends BaseRenderer {
    */
   render (renderState) {
     this.initCanvas(renderState)
-    // await this.renderBackgroundLayer(finalRenderState, currentRenderState, dt)
-    // await this.renderSceneLayer(finalRenderState, currentRenderState, dt)
+    this.renderXAxis(renderState)
+    this.renderYAxis(renderState)
+    this.renderYAxis(renderState)
   }
 
   initCanvas (renderState) {
-    if (this.element) {
+    if (!this.element) {
+      // Create canvas element if not already existed
+      let canvas = document.createElement('canvas'),
+          chartRenderState = renderState.chart
+
+      canvas.setAttribute('width', chartRenderState.width)
+      canvas.setAttribute('height', chartRenderState.height)
+      canvas.style.position = 'absolute'
+
+      this.element = canvas
+      this.container.appendChild(this.element)
+    }
+
+    // Clean current layer to prepare render new state
+    this.clearCanvas()
+  }
+
+  /**
+   * Clear current canvas layer
+   */
+  clearCanvas () {
+    this.element.getContext('2d').clearRect(0, 0, this.element.width, this.element.height)
+  }
+
+  /**
+   * Render the x axis
+   * @param {Object} renderState the render state renderer will render
+   */
+  renderXAxis (renderState) {
+    let xAxisRenderState = renderState.xAxis
+    if (!xAxisRenderState) {
+      // No x axis to render
       return
     }
 
-    // Create canvas element if not already existed
-    let canvas = document.createElement('canvas')
-    canvas.setAttribute('width', renderState.width)
-    canvas.setAttribute('height', renderState.height)
-    canvas.style.position = 'absolute'
+    let context = this.element.getContext('2d')
+    context.beginPath()
+    context.moveTo(xAxisRenderState.left, xAxisRenderState.top)
+    context.lineTo(xAxisRenderState.left + xAxisRenderState.width, xAxisRenderState.top)
+    context.stroke()
+  }
 
-    this.element = canvas
-    this.container.appendChild(this.element)
+  /**
+   * Render the y axis
+   * @param {Object} renderState the render state renderer will render
+   */
+  renderYAxis (renderState) {
+    let yAxisRenderState = renderState.yAxis
+    if (!yAxisRenderState) {
+      // No y axis to render
+      return
+    }
+    
+    let context = this.element.getContext('2d')
+    context.beginPath()
+    context.moveTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top)
+    context.lineTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top + yAxisRenderState.height)
+    context.stroke()
+  }
+
+  /**
+   * Render scene
+   * @param {Object} renderState the render state renderer will render
+   */
+  renderScene (renderState) {
   }
 }

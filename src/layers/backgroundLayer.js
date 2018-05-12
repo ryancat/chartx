@@ -7,23 +7,33 @@ export default {
 
     return {
       // Chart position
+      chart: {
+        top: 0,
+        left: 0,
+        width: store.chart.width,
+        height: store.chart.height
+      },
       // chartTop: 0,
       // chartLeft: 0,
       // chartWidth: store.chart.width,
       // chartHeight: store.chart.height,
 
       // X axis position
-      xAxisTop: store.scene.height,
-      xAxisLeft: store.yAxis.width,
-      xAxisWidth: store.xAxis.width,
-      xAxisHeight: store.xAxis.height,
+      xAxis: {
+        top: store.scene.height,
+        left: store.yAxis.width,
+        width: store.xAxis.width,
+        height: store.xAxis.height,
+      },
 
       // Y axis position
-      yAxisTop: 0,
-      yAxisLeft: 0,
-      yAxisWidth: store.yAxis.width,
-      yAxisHeight: store.yAxis.height,
-
+      yAxis: {
+        top: 0,
+        left: 0,
+        width: store.yAxis.width,
+        height: store.yAxis.height,
+      }
+      
       // Scene position
       // sceneTop: 0,
       // sceneLeft: store.yAxis.width,

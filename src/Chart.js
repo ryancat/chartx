@@ -46,7 +46,8 @@ export default class Chart {
         container: layerElement,
         type: layerType
       })
-      // Need to add to chart
+      // Add to chart
+      this.element.appendChild(layerElement)
     }
 
     // Start to create chart
