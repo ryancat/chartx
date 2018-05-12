@@ -31,10 +31,6 @@ export default {
 
       // Agregate aspect values
       switch(aspect.dataType) {
-        case dataTypeE.STRING:
-          draftState.tickCount = aspect.valueOrder.length
-          break
-
         case dataTypeE.NUMBER:
           draftState.min = _.min(aspect.values)
           draftState.max = _.max(aspect.values)

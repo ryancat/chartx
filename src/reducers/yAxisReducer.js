@@ -11,7 +11,6 @@ const defaultState = {
   valueOrder: null,
   min: null,
   max: null,
-  tickCount: 0,
   zoom: 1,
   width: 40,
   height: 360,

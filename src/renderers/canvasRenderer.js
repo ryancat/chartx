@@ -50,6 +50,7 @@ export default class CanvasRenderer extends BaseRenderer {
    * @param {Object} renderState the render state renderer will render
    */
   renderXAxis (renderState) {
+    console.log('renderState', renderState)
     let xAxisRenderState = renderState.xAxis
     if (!xAxisRenderState) {
       // No x axis to render
@@ -57,10 +58,14 @@ export default class CanvasRenderer extends BaseRenderer {
     }
 
     let context = this.element.getContext('2d')
+    // Render the x axis line
     context.beginPath()
     context.moveTo(xAxisRenderState.left, xAxisRenderState.top)
     context.lineTo(xAxisRenderState.left + xAxisRenderState.width, xAxisRenderState.top)
     context.stroke()
+
+    // Render ticks
+
   }
 
   /**
