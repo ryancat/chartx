@@ -3,7 +3,7 @@ import uuidv1 from 'uuid/v1'
 import { chartInit, chartLayoutUpdate } from './actions/chartAction'
 import layerTypeE from './enums/layerType'
 import rendererTypeE from './enums/rendererType'
-import Layer from './Layer'
+import Layer from './layers/Layer'
 
 // import {combineReducer, createReducer} from './stateManager'
 // import dataReducer from './reducers/dataReducer'
@@ -39,11 +39,14 @@ export default class Chart {
     // Chart will create layers based on layer type enum. Add more layers and implement their API as needed
     this.layerMap = {}
     for (let layerKey in layerTypeE) {
-      let layerElement = document.createElement('div')
-      layerElement.className = `${layerTypeE[layerKey]} ${CHARTX_LAYER_CLASS_NAME}`
-      this.layerMap[layerTypeE[layerKey]] = new Layer({
-        container: layerElement
+      let layerElement = document.createElement('div'),
+          layerType = layerTypeE[layerKey]
+      layerElement.className = `${layerType} ${CHARTX_LAYER_CLASS_NAME}`
+      this.layerMap[layerType] = new Layer({
+        container: layerElement,
+        type: layerType
       })
+      // Need to add to chart
     }
 
     // Start to create chart

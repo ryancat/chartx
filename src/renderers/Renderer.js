@@ -9,16 +9,16 @@ const renderer = {
    * Create renderer instance with given type
    * @param {Enum.rendererType} rendererType The rendererType enum
    */
-  createRenderer: (rendererType) => {
+  createRenderer: (rendererType, container) => {
     switch(rendererType) {
       case rendererTypeE.CANVAS:
-        return new CanvasRenderer()
+        return new CanvasRenderer(container);
 
       case rendererTypeE.SVG:
-        return new SvgRenderer()
+        return new SvgRenderer(container);
 
       case rendererTypeE.WEBGL:
-        return new WebGlRenderer()
+        return new WebGlRenderer(container);
 
       default:
         throw new Error(`Unexpected renderer type: ${rendererType}`);

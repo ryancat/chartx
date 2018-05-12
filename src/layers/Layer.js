@@ -1,4 +1,15 @@
-import renderer from './renderers/renderer'
+import renderer from '../renderers/renderer'
+import layerTypeE from '../enums/layerType'
+import backgroundLayer from './backgroundLayer'
+import sceneLayer from './sceneLayer'
+import toolLayer from './toolLayer'
+
+// The layer map
+// Update this map when you make changes to layers
+let layerMap = {}
+layerMap[layerTypeE.BACKGROUND] = backgroundLayer
+layerMap[layerTypeE.SCENE] = sceneLayer
+layerMap[layerTypeE.TOOL] = toolLayer
 
 /**
  * Layer class represent a layer object and holds render states.
@@ -8,6 +19,7 @@ import renderer from './renderers/renderer'
 export default class Layer {
   constructor (props) {
     this.container = props.container
+    this.type = props.type
     // Set the current/final render state to null initially
     this.currentRenderState = null
     this.finalRenderState = null
@@ -21,13 +33,13 @@ export default class Layer {
    * @param {Number} dt the time difference between last render controled by animation loop
    */
   render (dt) {
-    if (!this.renderer || !this.finalRenderState || this.isEqualRenderState()) {
+    if (!this.renderer || !this.finalRenderState || this.isRenderDone()) {
       // No renderer defined or no final render state need to render towards to.
       return
     }
 
     // Compute current render state
-    this.currentRenderState = this.computeCurrentRenderState(this.currentRenderState, this.finalRenderState, dt)
+    this.currentRenderState = this._computeCurrentRenderState(this.currentRenderState, this.finalRenderState, dt)
 
     // Render the layer using the layer's renderer 
     this.renderer.render(this.currentRenderState)
@@ -41,7 +53,7 @@ export default class Layer {
     const expectedRendererType = store.chart.rendererType
     // Set renderer
     if (!this.renderer) {
-      this.renderer = renderer.createRenderer(expectedRendererType)
+      this.renderer = renderer.createRenderer(expectedRendererType, this.container)
     }
 
     if (this.renderer.type !== expectedRendererType) {
@@ -50,7 +62,7 @@ export default class Layer {
     }
 
     // Compute final render state
-    this.finalRenderState = this.computeFinalRenderState(store)
+    this.finalRenderState = this._computeFinalRenderState(store)
     
     return {
       renderer: store.chart.renderer,
@@ -60,6 +72,10 @@ export default class Layer {
     }
   }
 
+  isRenderDone () {
+    return this.currentRenderState === this.finalRenderState
+  }
+
   /**
    * Compute and return the new current render state
    * This function could run in child process or web worker
@@ -67,8 +83,12 @@ export default class Layer {
    * @param {*} finalRenderState the final rendering state for this layer
    * @param {*} dt time difference since last render
    */
-  computeCurrentRenderState (currentRenderState, finalRenderState, dt) {
+  _computeCurrentRenderState (currentRenderState, finalRenderState, dt) {
+    if (!layerMap[this.type]) {
+      throw new Error(`Unexpected layer to work with: ${this.type}`)
+    }
 
+    return layerMap[this.type].computeCurrentRenderState(currentRenderState, finalRenderState, dt)
   }
 
   /**
@@ -76,7 +96,11 @@ export default class Layer {
    * This function could run in child process or web worker
    * @param {Object|Array} store the chart state
    */
-  computeFinalRenderState (store) {
+  _computeFinalRenderState (store) {
+    if (!layerMap[this.type]) {
+      throw new Error(`Unexpected layer to work with: ${this.type}`)
+    }
 
+    return layerMap[this.type].computeFinalRenderState(store)
   }
  }

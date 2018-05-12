@@ -1,53 +1,36 @@
 import BaseRenderer from './BaseRenderer'
 import rendererTypeE from '../enums/rendererType'
-import layerTypeE from '../enums/layerType'
-import { combineReducer, createStore } from '../stateManager'
-import backgroundRenderer from './backgroundRenderer'
 // import sceneRenderer from './sceneRenderer'
 
 export default class CanvasRenderer extends BaseRenderer {
-  constructor () {
+  constructor (container) {
     super()
     this.type = rendererTypeE.CANVAS
-    this.currentRenderState = createStore(combineReducer({
-      backgroundLayer: backgroundRenderer
-    }))
-    this.dispatch = this.currentRenderState.dispatch
+    this.container = container
   }
 
-  async render (finalRenderState, dt) {
-    // TODO: implement render details for canvas
-    // this.initLayers(finalRenderState)
-    this.currentRenderState = await this.dispatch({
-      finalRenderState,
-      dt
-    })
-
-    // TODO: actual render logic
-    this.initLayers
+  /**
+   * 
+   * @param {Object|Array} renderState The render state for canvas to render
+   */
+  render (renderState) {
+    this.initCanvas(renderState)
     // await this.renderBackgroundLayer(finalRenderState, currentRenderState, dt)
     // await this.renderSceneLayer(finalRenderState, currentRenderState, dt)
   }
 
-  // initLayers (finalRenderState) {
-  //   if (this.layers) {
-  //     return
-  //   }
+  initCanvas (renderState) {
+    if (this.element) {
+      return
+    }
 
-  //   // Create canvas layer if not already existed
-  //   let layers = {}
-  //   layers[layerTypeE.BACKGROUND] = document.createElement('canvas')
-  //   layers[layerTypeE.SCENE] = document.createElement('canvas')
+    // Create canvas element if not already existed
+    let canvas = document.createElement('canvas')
+    canvas.setAttribute('width', renderState.width)
+    canvas.setAttribute('height', renderState.height)
+    canvas.style.position = 'absolute'
 
-  //   for (let layerKey in layers) {
-  //     let layer = layers[layerKey]
-  //     layer.setAttribute('width', finalRenderState.width)
-  //     layer.setAttribute('height', finalRenderState.height)
-  //     layer.className = `${layerKey} chartx-layer`
-  //     layer.style.position = 'absolute'
-  //     finalRenderState.chartElement.appendChild(layer)
-  //   }
-
-  //   this.layers = layers
-  // }
+    this.element = canvas
+    this.container.appendChild(this.element)
+  }
 }
