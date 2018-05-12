@@ -15,7 +15,7 @@ export default {
         // Do not have x aspect in chart config
         // hide the default axis in this case
         draftState.isHidden = true
-        console.warn(`No ${aspectType} aspect configured`)
+        throw new Error(`No ${aspectType} aspect configured`)
         return
       }
 
@@ -47,7 +47,7 @@ export default {
           break
 
         default:
-          console.warn(`Unexpected data type on ${aspectType} aspect: ${aspect.dataType}`)
+          throw new Error(`Unexpected data type on ${aspectType} aspect: ${aspect.dataType}`)
       }
 
       // Calculate dimension information
@@ -64,7 +64,7 @@ export default {
           break
 
         default:
-        console.warn(`Unexpected aspect type: ${aspect.dataType}`)
+        throw new Error(`Unexpected aspect type: ${aspect.dataType}`)
       }
     })
   }

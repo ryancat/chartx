@@ -1,3 +1,5 @@
 export default {
-  CANVAS: 'canvas'
+  CANVAS: 'canvas',
+  SVG: 'svg',
+  WEBGL: 'webgl'
 }

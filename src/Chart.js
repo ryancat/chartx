@@ -1,6 +1,10 @@
 import uuidv1 from 'uuid/v1'
 
 import { chartInit, chartLayoutUpdate } from './actions/chartAction'
+import layerTypeE from './enums/layerType'
+import rendererTypeE from './enums/rendererType'
+import Layer from './Layer'
+
 // import {combineReducer, createReducer} from './stateManager'
 // import dataReducer from './reducers/dataReducer'
 // import frsReducer from './reducers/frsReducer'
@@ -10,6 +14,8 @@ import { chartInit, chartLayoutUpdate } from './actions/chartAction'
 // import {
 //   setRenderer
 // } from './actions/chartAction'
+
+const CHARTX_LAYER_CLASS_NAME = 'chartx-layer'
 
 export default class Chart {
   /**
@@ -30,23 +36,104 @@ export default class Chart {
     this.element = document.createElement('div')
     this.chartConfig = chartConfig
 
-    this.init()
+    // Chart will create layers based on layer type enum. Add more layers and implement their API as needed
+    this.layerMap = {}
+    for (let layerKey in layerTypeE) {
+      let layerElement = document.createElement('div')
+      layerElement.className = `${layerTypeE[layerKey]} ${CHARTX_LAYER_CLASS_NAME}`
+      this.layerMap[layerTypeE[layerKey]] = new Layer({
+        container: layerElement
+      })
+    }
+
+    // Start to create chart
+    this.runNewChart()
   }
 
-  async init () {
+  /**
+   * Run chart workflow
+   * init data -> calculate FRS -> render
+   */
+  async runNewChart () {
+    // TODO use pipe runner to chain the async calls
     // Indicate the chart has initialized
-    const store = await Chart.dispatch(chartInit(this.id, this.chartConfig))
+    let store = await Chart.dispatch(chartInit(this.id, this.chartConfig))
 
     // Calculate the chart dimensions for layout
     // TODO directly access store maybe not a good idea,
     // Need to think how to optimize here. This is really just
     // like a container
-    Chart.dispatch(chartLayoutUpdate(this.id, {
+    store = await Chart.dispatch(chartLayoutUpdate(this.id, {
       xAxisHeight: store.xAxis.height,
       yAxisWidth: store.yAxis.width,
       chartHeight: store.chart.height,
       chartWidth: store.chart.width
     }))
+
+    // Now we have updated store, we need to start rendering
+    // TODO: Important
+    // After we get the data state, we need to compute the final render state
+    // The final render state should be for each layer. Since each layer may have 
+    // different renderer hence different FRS representation. However, Chart should
+    // not care about how each layer got rendered, or even how many layers in total
+    //
+    // I think we should move the computing FRS work for each layer inside each
+    // layer. Basically each layer should have their own rendering logic, as well as
+    // logic to compute FRS. Chart should trigger this process by dispatch the data
+    // state to each layer, and wait until CRS is coming back.
+
+    // Chart.dispatch(chartRender(this.id))
+    await this.updateLayers(store)
+    // this.render()
+  }
+
+  /**
+   * Update all layers with current chart state
+   */
+  async updateLayers (store) {
+    // return {
+    //   renderer: rendererTypeE.CANVAS,
+    //   chartElement: this.element,
+    //   width: store.chart.width,
+    //   height: store.chart.height
+    // }
+
+    await this._eachLayerAsync(async (layer) => await layer.update(store))
+  }
+
+  /**
+   * Render FRS as fast as possible
+   * Assume Canvas renderer for now
+   */
+  render (dt) {
+    // if (!this.finalRenderState) {
+    //   // No final render state defined for current chart
+    //   return
+    // }
+
+    // switch(this.finalRenderState.renderer) {
+    //   case rendererTypeE.CANVAS:
+    //     await canvasRenderer.render(this.finalRenderState, dt)
+
+    //     // this.crs = canvasRenderer.render(this.finalRenderState, this.crs, dt)
+    //     break
+
+    //   default:
+    //     console.warn(`Renderer not found: ${finalRenderState.renderer}`)
+    // }
+
+
+    // Render each layer in chart
+    this._eachLayerAsync((layer) => layer.render(dt))
+  }
+
+  /**
+   * Iterate each layer in chart
+   */
+  async _eachLayerAsync (callback) {
+    for (let layerKey in this.layerMap) {
+      await callback(this.layerMap[layerKey])
+    }
   }
 }
 

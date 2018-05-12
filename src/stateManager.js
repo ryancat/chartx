@@ -100,20 +100,41 @@ export function combineReducer (reducerMap = {}) {
 
     for (let key in reducerMap) {
       let reducerFn = reducerMap[key],
-          existState = state[key]
+          childState = state[key]
 
       if (util.isFunction(reducerFn)) {
-        // Pass the whole state down as argument for
-        // cross state key access
-        // newState[key] = await reducerFn(existState, action, state, reducerMap)
-        newState[key] = await reducerFn(existState, action)
+        // Compute children state
+        newState[key] = await reducerFn(childState, action)
       } 
       else {
         // Recursively combine nested reducer map
-        newState[key] = await combineReducer(reducerMap[key])(existState, action)
+        newState[key] = await combineReducer(reducerMap[key])(childState, action)
       }
     }
 
     return newState
   }
 }
+
+// export function combineRender (renderMap = {}) {
+//   return async (currentRenderState = {}, finalRenderState = {}, dt) => {
+//     let newCurrentRenderState = {}
+
+//     for (let key in renderMap) {
+//       let renderFn = renderMap[key],
+//           childState = currentRenderState[key],
+//           childFinalState = finalRenderState[key]
+
+//       if (util.isFunction(renderFn)) {
+//         // Compute children current render state
+//         newCurrentRenderState[key] = await renderFn(childState, childFinalState, dt)
+//       } 
+//       else {
+//         // Recursively combine nested reducer map
+//         newCurrentRenderState[key] = await combineRender(renderMap[key])(childState, childFinalState, dt)
+//       }
+//     }
+
+//     return newCurrentRenderState
+//   }
+// }

@@ -3,7 +3,8 @@ import chartx from '../src/chartx'
 const {
   dataType,
   aspectType,
-  markType
+  markType,
+  rendererType
 } = chartx.enums
 
 // The config required to render a chart
@@ -38,6 +39,9 @@ const chartConfig = {
   width: 400,
   // The outer height of chart
   height: 400,
+  // The renderer to use for rendering API
+  // TODO: Need to figure out a way to support different renderer in eacy layer
+  rendererType: rendererType.CANVAS,
   // If truthy will show default control panel
   enableDefaultControls: true
 }

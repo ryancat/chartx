@@ -24,7 +24,7 @@ class Layer {
    * Render layer
    */
   render () {
-    console.warn('Need implement Layer.render')
+    throw new Error('Need implement Layer.render')
   }
 }
 
