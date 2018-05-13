@@ -2,15 +2,10 @@ import produce from 'immer'
 import _ from 'lodash'
 
 import { CHART_INIT, CHART_LAYOUT_UPDATE } from '../actions/chartAction'
-import aspectType from '../enums/aspectType'
+import aspectTypeE from '../enums/aspectType'
 import _axisReducerUtil from './_axisReducerUtil'
 
 const defaultState = {
-  title: 'X axis',
-  values: [],
-  valueOrder: null,
-  min: null,
-  max: null,
   zoom: 1,
   width: 360,
   height: 40,
@@ -23,8 +18,8 @@ export default (state = defaultState, action) => {
 
     case CHART_INIT:
       return _axisReducerUtil.chartInit(state, {
-        aspect: _.find(action.chartConfig.aspects, { aspect: aspectType.X }),
-        aspectType: aspectType.X
+        aspects: _.filter(action.chartConfig.aspects, { aspect: aspectTypeE.X }),
+        aspectType: aspectTypeE.X
       })
 
     case CHART_LAYOUT_UPDATE:

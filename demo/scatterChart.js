@@ -21,6 +21,13 @@ const chartConfig = {
       valueOrder: ['Vans', 'Adidas', 'Nike']
     },
     {
+      aspect: aspectType.X,
+      title: 'Test',
+      dataType: dataType.STRING,
+      values: ['test', 'test', 'test', 'test', 'test', 'test'],
+      valueOrder: ['test']
+    },
+    {
       aspect: aspectType.Y,
       title: 'Number sold',
       dataType: dataType.NUMBER,
