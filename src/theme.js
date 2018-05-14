@@ -12,6 +12,10 @@ export default {
       fontWeight: 'normal'
     },
 
+    mark: {
+      minSize: 10
+    },
+
     extraSpace: 10
   }
 }

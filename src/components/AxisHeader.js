@@ -1,5 +1,9 @@
+import _ from 'lodash'
+
 import AxisCell from './AxisCell'
 import util from '../util'
+import theme from '../theme'
+import aspectTypeE from '../enums/aspectType'
 
 /**
  * Define axis header class
@@ -11,6 +15,11 @@ import util from '../util'
 export default class AxisHeader {
   constructor (props) {
     this.position = props.position
+    this.aspectType = props.aspectType
+    this.locationType = props.locationType
+
+    // Should use locationType
+    this.mainAxisPositionKey = this.aspectType === aspectTypeE.X ? 'width' : this.aspectType === aspectTypeE.Y ? 'height' : null
 
     this.rootAxisCell = this.buildTree(props.axisLevels)
   }
@@ -58,35 +67,65 @@ export default class AxisHeader {
         // bitwiseFilter: Math.pow(2, levelState.values.length) - 1
 
         // The global root cell has all values in current level
-        cellValueIndexes: levelState.values.map((value, valueIndex) => valueIndex)
+        valueIndexes: levelState.values.map((value, valueIndex) => valueIndex),
+        parentPosition: this.position,
+        parentPositionOffset: {
+          top: 0,
+          left: 0
+        },
+        parentPositionMainOffset: 0,
+        aspectType: this.aspectType, 
+        locationType: this.locationType
       })
 
       return this.buildTree(levelStates.slice(1), rootCell)
     }
 
     // Pass down rootCell, we need to categorize current level state based on
-    // rootCell's cellValueIndexes
+    // rootCell's valueIndexes
 
     // 1. Category root node values based on the bitwiseFilter and values data
     // TODO: find a way to do this using ArrayBuffer
     // const bitwiseIndexMap = util.getBitwiseIndexMapWithBitwiseFilter(rootCell.levelState.values, rootCell.bitwiseFilter)
-    const indexMap = util.getIndexMapWithFilter(rootCell.levelState.values, rootCell.cellValueIndexes)
+    const indexMap = util.getIndexMapWithFilter(rootCell.levelState.values, rootCell.valueIndexes)
 
     // 2. Create child tree node based on categories
     for (let indexKey in indexMap) {
       // For each of the index category, we create a child node
       let childNode = new AxisCell({
         levelState,
-        cellValueIndexes: indexMap[indexKey]
+        valueIndexes: indexMap[indexKey],
+        parentPosition: rootCell.position,
+        parentPositionOffset: {
+          top: 0,
+          left: 0
+        },
+        parentPositionMainOffset: this.getPositionMainOffset(rootCell),
+        aspectType: this.aspectType, 
+        locationType: this.locationType
       })
 
       // This will run DFS algorithm to build tree
       rootCell.addChild(this.buildTree(levelStates.slice(1), childNode))
-      // rootCell.cellValueIndexes.map((filteredIndex) => levelStates[0].values[filteredIndex]),
+      // rootCell.valueIndexes.map((filteredIndex) => levelStates[0].values[filteredIndex]),
     }
 
     return rootCell
   }
+
+  // /**
+  //  * Get the offset in pixel on main direction
+  //  * The offset is determined by the rendered child leaves and gaps
+  //  */
+  // getPositionMainOffset (axisCell) {
+  //   const addedChildrenLeavesCount = _.sum(axisCell.children.map((child) => child.valueIndexes.length)),
+  //         totalLeavesCount = axisCell.valueIndexes.length,
+  //         singleLeafMainSize = this.position[this.mainAxisPositionKey] / totalLeavesCount
+          
+  //   return singleLeafMainSize * (addedChildrenLeavesCount + 1)
+  // }
+
+  
 }
 
 

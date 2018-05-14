@@ -62,6 +62,45 @@ const util = {
   },
 
   /**
+   * Categorize the given index array with count limit
+   * @example
+   * // return { '0': [0, 3], '1': [2] }
+   * getIndexesByCategory([0, 2, 1, 0], 3)
+   * @param {Array} indexArr array of indexes
+   * @param {Array} count the count limit for indexes
+   */
+  getFirstNValuesIndexMap: (indexArr = [], count = Infinity) => {
+    const totalCount = indexArr.length
+    let indexMap = util.getIndexMap(indexArr)
+
+    if (count >= totalCount) {
+      // When the count limit is greater than total count
+      // nothing need to be filtered
+      return indexMap
+    }
+
+    let addedIndexCount = 0,
+        isReachLimit = false
+    for (let indexKey in indexMap) {
+      if (isReachLimit) {
+        delete indexMap[indexKey]
+        continue
+      }
+
+      let difference = count - (addedIndexCount + indexMap[indexKey].length)
+      if (difference <= 0) {
+        // We reach the count limit. Crop indexes
+        indexMap[indexKey] = indexMap[indexKey].slice(0, count - addedIndexCount)
+        isReachLimit = true
+      }
+
+      addedIndexCount += indexMap[indexKey].length
+    }
+    
+    return indexMap
+  },
+
+  /**
    * Categorize given index array in bitwise format
    * @example
    * // return { '0': 0101, '1': 0010, '2': 1000 }

@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import { CHART_INIT, CHART_LAYOUT_UPDATE } from '../actions/chartAction'
 import aspectTypeE from '../enums/aspectType'
+import locationTypeE from '../enums/locationType'
 import _axisReducerUtil from './_axisReducerUtil'
 
 const defaultState = {

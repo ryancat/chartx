@@ -3,8 +3,8 @@ import chartx from '../src/chartx'
 const {
   dataType,
   aspectType,
-  markType,
-  rendererType
+  rendererType,
+  locationType
 } = chartx.enums
 
 // The config required to render a chart
@@ -17,28 +17,37 @@ const chartConfig = {
       aspect: aspectType.X,
       title: 'Shoes',
       dataType: dataType.STRING,
-      values: ['Vans', 'Vans', 'Adidas', 'Adidas', 'Nike', 'Nike'],
-      valueOrder: ['Vans', 'Adidas', 'Nike']
+      values: ['Vans', 'Vans', 'Vans', 'Vans', 'Adidas', 'Adidas', 'Adidas', 'Adidas', 'Nike', 'Nike', 'Nike', 'Nike'],
+      valueOrder: ['Vans', 'Adidas', 'Nike'],
+      locationType: locationType.BOTTOM
     },
     {
       aspect: aspectType.X,
-      title: 'Test',
+      title: 'Sex',
       dataType: dataType.STRING,
-      values: ['test', 'test', 'test', 'test', 'test', 'test'],
-      valueOrder: ['test']
+      values: ['Male', 'Male','Female', 'Female', 'Male', 'Male', 'Female', 'Female', 'Male', 'Male', 'Female', 'Female'],
+      valueOrder: ['Male', 'Female'],
+      locationType: locationType.TOP
+    },
+    {
+      aspect: aspectType.X,
+      title: 'AVG(Sold)',
+      dataType: dataType.NUMBER,
+      values: [72, 102, 48, 123, 174, 21, 51, 79, 77, 92, 45, 52],
+      locationType: locationType.BOTTOM
     },
     {
       aspect: aspectType.Y,
       title: 'Number sold',
       dataType: dataType.NUMBER,
-      values: [100, 30, 67, 103, 10, 150],
-      markType: markType.DOT
+      values: [100, 30, 67, 103, 10, 150, 12, 37, 52, 79, 99, 137],
+      locationType: locationType.LEFT
     },
     {
       aspect: aspectType.COLOR,
-      title: 'Sex',
+      title: 'Color',
       dataType: dataType.STRING,
-      values: ['Male', 'Female', 'Male', 'Female', 'Male', 'Female'],
+      values: ['Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue'],
       valueOrder: ['Male', 'Female']
     }
   ],

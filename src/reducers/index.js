@@ -3,7 +3,7 @@ import yAxisReducer from './yAxisReducer'
 import detailReducer from './detailReducer'
 import legendReducer from './legendReducer'
 import chartReducer from './chartReducer'
-import sceneReducer from './sceneReducer'
+// import sceneReducer from './sceneReducer'
 
 export default {
   // scene: sceneReducer,

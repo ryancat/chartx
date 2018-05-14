@@ -12,11 +12,10 @@ export default {
       const aspectType = action.aspectType,
             aspects = action.aspects
       
-      if (!aspects) {
-        // Do not have x aspect in chart config
+      if (!aspects || aspects.length === 0) {
+        // Do not have such aspect in chart config
         // hide the default axis in this case
         draftState.isHidden = true
-        throw new Error(`No ${aspectType} aspect configured`)
         return
       }
 
@@ -31,7 +30,8 @@ export default {
           dataType: aspect.dataType,
           values: aspect.values,
           // Only categorical dimensions have value order
-          valueOrder: aspect.valueOrder || null
+          valueOrder: aspect.valueOrder || null,
+          locationType: aspect.locationType
         }
 
         if (aspect.dataType === dataTypeE.NUMBER) {
@@ -78,6 +78,7 @@ export default {
         default:
         throw new Error(`Unexpected aspect type: ${aspect.dataType}`)
       }
+
     })
   }
 }
