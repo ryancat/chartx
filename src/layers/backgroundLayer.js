@@ -73,6 +73,8 @@ const backgroundLayer = {
     //         }
     // })
 
+    const axisOffset = backgroundLayer._getAxisOffset(store)
+
     return {
       // Chart position
       chart: {
@@ -87,7 +89,7 @@ const backgroundLayer = {
       // chartHeight: store.chart.height,
 
       // X axis
-      xAxis: backgroundLayer._getXAxisRenderState(store),
+      xAxis: backgroundLayer._getXAxisRenderState(store, axisOffset),
 
       // Y axis position
       yAxis,
@@ -108,10 +110,37 @@ const backgroundLayer = {
     return finalRenderState
   },
 
+  _getAxisOffset: (store) => {
+    let axisOffset = {},
+        xAxisLevelStates = store.xAxis.axisLevels,
+        yAxisLevelStates = store.yAxis.axisLevels
+
+    // Aggregate number of axis levels that are at certain
+    // location type. This affects the position calculation.
+    axisOffset[locationTypeE.TOP] = _.sum(
+      _.filter(xAxisLevelStates, { locationType: locationTypeE.TOP })
+      .map(axisLevelState => axisLevelState.levelSize)
+    ),
+    axisOffset[locationTypeE.BOTTOM] = _.sum(
+      _.filter(xAxisLevelStates, { locationType: locationTypeE.BOTTOM })
+      .map(axisLevelState => axisLevelState.levelSize)
+    ),
+    axisOffset[locationTypeE.LEFT] = _.sum(
+      _.filter(yAxisLevelStates, { locationType: locationTypeE.LEFT })
+      .map(axisLevelState => axisLevelState.levelSize)
+    ),
+    axisOffset[locationTypeE.RIGHT] = _.sum(
+      _.filter(yAxisLevelStates, { locationType: locationTypeE.RIGHT })
+      .map(axisLevelState => axisLevelState.levelSize)
+    )
+
+    return axisOffset
+  },
+
   /**
    * Get the render state for x axis
    */
-  _getXAxisRenderState: (store) => {
+  _getXAxisRenderState: (store, axisOffset) => {
     if (store.xAxis.isHidden) {
       // When x axis is hidden, the render state is null
       return null
@@ -119,37 +148,11 @@ const backgroundLayer = {
 
     let xAxisRenderState = {}
 
-    // switch(xAxisLocationType) {
-    //   case locationTypeE.BOTTOM:
-    //     // Get x axis position based on store state
-    //     // TODO: maybe we should move the height and width calculation
-    //     // here as they are for rendering
-    //     xAxis.position = new Position({
-    //       top: store.yAxis.height,
-    //       left: store.yAxis.width,
-    //       width: store.xAxis.width,
-    //       height: store.xAxis.height
-    //     })
-    //     break
-
-    //   case locationTypeE.TOP:
-    //     xAxis.position = new Position({
-    //       top: store.xAxis.height,
-    //       left: store.yAxis.width,
-    //       width: store.xAxis.width,
-    //       height: store.xAxis.height
-    //     })
-    //     break
-
-    //   default:
-    //     throw new Error(`Unexpected location for x axis: ${xAxisLocationType}`)
-    // }
-
     // X axis can be top or bottom depend on the axis states
     xAxisRenderState[locationTypeE.TOP] = {
       position: new Position({
-        top: store.xAxis.height,
-        left: store.yAxis.width,
+        top: axisOffset[locationTypeE.TOP],
+        left: axisOffset[locationTypeE.LEFT],
         width: store.xAxis.width,
         height: store.xAxis.height
       }),
@@ -159,8 +162,8 @@ const backgroundLayer = {
 
     xAxisRenderState[locationTypeE.BOTTOM] = {
       position: new Position({
-        top: store.yAxis.height,
-        left: store.yAxis.width,
+        top: store.chart.height - axisOffset[locationTypeE.BOTTOM],
+        left: axisOffset[locationTypeE.LEFT],
         width: store.xAxis.width,
         height: store.xAxis.height
       }),
@@ -180,6 +183,54 @@ const backgroundLayer = {
     })
 
     return xAxisRenderState
+  },
+
+  /**
+   * Get the render state for y axis
+   */
+  _getYAxisRenderState: (store) => {
+    if (store.yAxis.isHidden) {
+      // When x axis is hidden, the render state is null
+      return null
+    }
+
+    let yAxisRenderState = {}
+
+    // X axis can be top or bottom depend on the axis states
+    yAxisRenderState[locationTypeE.LEFT] = {
+      position: new Position({
+        top: store.xAxis.height,
+        left: store.yAxis.width,
+        width: store.xAxis.width,
+        height: store.xAxis.height
+      }),
+      // The axis cell map on axis
+      axisCellMapByLevel: {}
+    }
+
+    yAxisRenderState[locationTypeE.BOTTOM] = {
+      position: new Position({
+        top: store.yAxis.height,
+        left: store.yAxis.width,
+        width: store.xAxis.width,
+        height: store.xAxis.height
+      }),
+      // The axis cell map on axis
+      axisCellMapByLevel: {}
+    }
+
+    // All used for calculating position information for axis cells
+    yAxisRenderState.mainAxisSize = store.xAxis.width
+    yAxisRenderState.markSize = Math.max(theme.axis.mark.minSize, store.xAxis.width / store.xAxis.axisLevels[0].values.length)
+
+    // Compute x axis header cell (in tree structure)
+    yAxisRenderState.rootAxisCell = AxisCell.buildTree({
+      // level states will be used by reference. Should not be mutated.
+      levelStates: store.xAxis.axisLevels,
+      axisRenderState: yAxisRenderState
+    })
+
+    return yAxisRenderState
   }
 }
 

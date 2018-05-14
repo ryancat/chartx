@@ -25,31 +25,6 @@ export default class AxisCell {
     this.valueIndexes = props.valueIndexes
     this.markSize = props.markSize
     this.position = props.position
-
-
-    // this.levelState = props.levelState
-    // this.valueIndexes = props.valueIndexes
-    // this.aspectType = props.aspectType
-    // this.locationType = props.locationType
-    // this.parentPosition = props.parentPosition
-    // this.parentPositionMainOffset = props.parentPositionMainOffset
-
-    // if (this.aspectType !== aspectTypeE.X && this.aspectType !== aspectTypeE.Y) {
-    //   // Axis cell are only for axis. Currently only X and Y axes are supported
-    //   throw new Error(`Unexpected aspect type for axis: ${this.aspectType}`)
-    // }
-
-    // // Default location types
-    // if (!this.locationType) {
-    //   if (this.aspectType === aspectTypeE.X) {
-    //     // For x axis, default location is at bottom
-    //     this.locationType = locationTypeE.BOTTOM
-    //   }
-    //   else if (this.aspectType === aspectTypeE.Y) {
-    //     // For y axis, default location is at left
-    //     this.locationType = locationTypeE.LEFT
-    //   }
-    // }
   }
 
   /**
@@ -93,28 +68,6 @@ export default class AxisCell {
     const levelState = levelStates[level],
           locationType = levelState.locationType
     if (!rootCell) {
-      // Calculate mark dimension for all marks in cell.
-      // This need to be done earlier to decide if we need to crop
-      // some marks out due to space limitation
-      // let markSize,
-      //     mainDimension
-      // switch (locationType) {
-      //   case locationTypeE.TOP:
-      //   case locationTypeE.BOTTOM:
-      //     mainDimension = axisRenderState[locationType].position.width
-      //     markSize = mainDimension / levelState.values.length
-      //     break
-        
-      //   case locationTypeE.LEFT:
-      //   case locationTypeE.RIGHT:
-      //     mainDimension = axisRenderState[locationType].position.height
-      //     markSize = mainDimension / levelState.values.length
-      //     break
-
-      //   default:
-      //     throw new Error(`Unexpected location type: ${locationType}`)
-      // }
-
       let valueIndexes,
           indexMap
       if (axisRenderState.markSize === theme.axis.mark.minSize) {
@@ -196,57 +149,15 @@ export default class AxisCell {
         axisPosition = axisAtLocation.position,
         axisLevelCount = Object.keys(axisAtLocation.axisCellMapByLevel).length
 
-    // if (!parentAxisCell) {
-    //   // Root cell
-    //   addedChildrenSize = 0
-    // }
-    // else {
-    //   addedChildrenLeavesCount = _.sum(
-    //     parentAxisCell.children.map((child) => child.valueIndexes.length))
-    //   // With some buffer
-    //   addedChildrenSize = axisRenderState.markSize * (addedChildrenLeavesCount + 1)
-    // }
-
     switch(locationType) {
       case locationTypeE.BOTTOM:
         axisCellPosition = {
           top: axisPosition.top + axisPosition.height - levelState.levelSize * (axisLevelCount + 1),
           left: axisPosition.left + addedChildrenSize
         }
-
-
-        //   // This is root cell
-        //   const axisPosition = rootCellOptions.axisPosition
-        //   axisCellPosition = {
-        //     top: axisPosition.top + axisPosition.height - levelState.levelSize,
-        //     left: axisPosition.left
-        //   }
-        // }
-        // else {
-        //   // This is child cell
-        //   axisCellPosition = {
-        //     top: parentAxisCell.position.top - levelState.levelSize,
-        //     left: parentAxisCell.position.left + addedChildrenSize
-        //   }
-        // }
         break
 
       case locationTypeE.TOP:
-        // if (!parentAxisCell) {
-        //   // This is root cell
-        //   const axisPosition = rootCellOptions.axisPosition
-        //   axisCellPosition = {
-        //     top: axisPosition.top,
-        //     left: axisPosition.left
-        //   }
-        // }
-        // else {
-        //   // This is child cell
-        //   axisCellPosition = {
-        //     top: parentAxisCell.position.top + levelState.levelSize,
-        //     left: parentAxisCell.position.left + addedChildrenSize
-        //   }
-        // }
         axisCellPosition = {
           top: levelState.levelSize * axisLevelCount,
           left: axisPosition.left + addedChildrenSize
@@ -254,21 +165,6 @@ export default class AxisCell {
         break
         
       case locationTypeE.LEFT:
-        // if (!parentAxisCell) {
-        //   // This is root cell
-        //   const axisPosition = rootCellOptions.axisPosition
-        //   axisCellPosition = {
-        //     top: axisPosition.top,
-        //     left: axisPosition.left
-        //   }
-        // }
-        // else {
-        //   // This is child cell
-        //   axisCellPosition = {
-        //     top: parentAxisCell.position.top + addedChildrenSize,
-        //     left: parentAxisCell.position.left + levelState.levelSize
-        //   }
-        // }
         axisCellPosition = {
           top: axisPosition.top + addedChildrenSize,
           left: levelState.levelSize * axisLevelCount
@@ -276,21 +172,6 @@ export default class AxisCell {
         break
 
       case locationTypeE.RIGHT:
-        // if (!parentAxisCell) {
-        //   // This is root cell
-        //   const axisPosition = rootCellOptions.axisPosition
-        //   axisCellPosition = {
-        //     top: axisPosition.top,
-        //     left: axisPosition.left + axisPosition.width - levelState.levelSize
-        //   }
-        // }
-        // else {
-        //   // This is child cell
-        //   axisCellPosition = {
-        //     top: parentAxisCell.position.top + addedChildrenSize,
-        //     left: parentAxisCell.position.left - levelState.levelSize
-        //   }
-        // }
         axisCellPosition = {
           top: axisPosition.top + addedChildrenSize,
           left: axisPosition.left + axisPosition.width - levelState.levelSize * (axisLevelCount + 1)
@@ -303,17 +184,6 @@ export default class AxisCell {
 
     return axisCellPosition
   }
-
-  // static getAxisCellPosition (parentAxisCell = null, locationType, axisPosition) {
-  //   const parentCellPosition = parentAxisCell ? parentAxisCell.position : {
-  //     top: 
-  //   }
-  //   const parentPositionOffset = AxisCell.getParentPositionOffset(parentAxisCell, locationType)
-  //   return new Position({
-  //     top: parentPosition.top + parentPositionOffset.top,
-  //     left: parentPosition.left + parentPositionOffset.left
-  //   })
-  // }
 
   /**
    * Add children axis cell

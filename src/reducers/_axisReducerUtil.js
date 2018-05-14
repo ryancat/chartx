@@ -10,7 +10,15 @@ export default {
   chartInit: (state, action) => {
     return produce(state, (draftState) => {
       const aspectType = action.aspectType,
-            aspects = action.aspects
+            axisTheme = theme.axis,
+            titleSize = axisTheme.title.fontSize,
+            labelSize = axisTheme.label.fontSize,
+            levelSize = titleSize + labelSize + axisTheme.extraSpace,
+            allAspects = action.aspects,
+            xAspects = _.filter(allAspects, { aspect: aspectTypeE.X }),
+            yAspects = _.filter(allAspects, { aspect: aspectTypeE.Y }),
+            aspects = aspectType === aspectTypeE.X ? xAspects 
+            : aspectType === aspectTypeE.Y ? yAspects : null
       
       if (!aspects || aspects.length === 0) {
         // Do not have such aspect in chart config
@@ -19,10 +27,8 @@ export default {
         return
       }
 
-      // Set levels of data on this axis, depend on the aspects level
-      const axisTheme = theme.axis
-      let axisLevels = [],
-          axisSize = 0
+      // Get axis levels array
+      let axisLevels = []
       aspects.map((aspect) => {
         let aspectState = {
           id: uuidv1(),
@@ -57,22 +63,22 @@ export default {
         }
 
         // Calculate axis level size
-        aspectState.titleSize = axisTheme.title.fontSize
-        aspectState.labelSize = axisTheme.label.fontSize
-        aspectState.levelSize = aspectState.titleSize + aspectState.labelSize + axisTheme.extraSpace
-        axisSize += aspectState.levelSize
+        aspectState.titleSize = titleSize
+        aspectState.labelSize = labelSize
+        aspectState.levelSize = levelSize
 
         axisLevels.push(aspectState)
       })
       draftState.axisLevels = axisLevels
 
+      // Calculate the updated axis dimension size
       switch (aspectType) {
         case aspectTypeE.X:
-          draftState.height = axisSize
+          draftState.width = action.chartWidth - yAspects.length * levelSize
           break
         
         case aspectTypeE.Y:
-          draftState.width = axisSize
+          draftState.height = action.chartHeight - xAspects.length * levelSize
           break
 
         default:

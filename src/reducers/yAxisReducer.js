@@ -19,7 +19,9 @@ export default (state = defaultState, action) => {
 
     case CHART_INIT:
       return _axisReducerUtil.chartInit(state, {
-        aspects: _.filter(action.chartConfig.aspects, { aspect: aspectTypeE.Y }),
+        aspects: action.chartConfig.aspects,
+        chartWidth: action.chartConfig.width,
+        chartHeight: action.chartConfig.height,
         aspectType: aspectTypeE.Y
       })
 
