@@ -45,6 +45,15 @@ export default class CanvasRenderer extends BaseRenderer {
     this.element.getContext('2d').clearRect(0, 0, this.element.width, this.element.height)
   }
 
+  renderAxis (axisRenderState) {
+    if (!axisRenderState) {
+      return
+    }
+
+    // const rootAxisCell = axisRenderState.rootAxisCell
+
+  }
+
   /**
    * Render the x axis
    * @param {Object} renderState the render state renderer will render
@@ -57,6 +66,8 @@ export default class CanvasRenderer extends BaseRenderer {
       return
     }
 
+    // Use xAxisRenderState.rootAxisCell to render all axis cells
+
     let context = this.element.getContext('2d')
     // Render the x axis line
     context.beginPath()
@@ -65,7 +76,6 @@ export default class CanvasRenderer extends BaseRenderer {
     context.stroke()
 
     // Render ticks
-
   }
 
   /**

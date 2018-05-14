@@ -8,8 +8,6 @@ import _axisReducerUtil from './_axisReducerUtil'
 
 const defaultState = {
   zoom: 1,
-  width: 40,
-  height: 360,
   includeZero: true,
   isHidden: false
 }

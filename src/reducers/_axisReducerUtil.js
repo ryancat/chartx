@@ -70,21 +70,6 @@ export default {
         axisLevels.push(aspectState)
       })
       draftState.axisLevels = axisLevels
-
-      // Calculate the updated axis dimension size
-      switch (aspectType) {
-        case aspectTypeE.X:
-          draftState.width = action.chartWidth - yAspects.length * levelSize
-          break
-        
-        case aspectTypeE.Y:
-          draftState.height = action.chartHeight - xAspects.length * levelSize
-          break
-
-        default:
-        throw new Error(`Unexpected aspect type: ${aspect.dataType}`)
-      }
-
     })
   }
 }

@@ -67,6 +67,8 @@ export default class AxisCell {
 
     const levelState = levelStates[level],
           locationType = levelState.locationType
+
+    let axisCellMapByLevel = axisRenderState.location[locationType].axisCellMapByLevel
     if (!rootCell) {
       let valueIndexes,
           indexMap
@@ -89,8 +91,8 @@ export default class AxisCell {
         markSize: axisRenderState.markSize
       })
 
-      axisRenderState[locationType].axisCellMapByLevel[level] = axisRenderState[locationType].axisCellMapByLevel[level] || []
-      axisRenderState[locationType].axisCellMapByLevel[level].push(rootCell)
+      axisCellMapByLevel[level] = axisCellMapByLevel[level] || []
+      axisCellMapByLevel[level].push(rootCell)
 
       return this.buildTree({
         levelStates,
@@ -117,8 +119,8 @@ export default class AxisCell {
         markSize: axisRenderState.markSize
       })
 
-      axisRenderState[locationType].axisCellMapByLevel[level] = axisRenderState[locationType].axisCellMapByLevel[level] || []
-      axisRenderState[locationType].axisCellMapByLevel[level].push(childNode)
+      axisCellMapByLevel[level] = axisCellMapByLevel[level] || []
+      axisCellMapByLevel[level].push(childNode)
 
       // This will run DFS algorithm to build tree
       rootCell.addChild(this.buildTree({
@@ -145,7 +147,7 @@ export default class AxisCell {
           _.sum(parentAxisCell.children.map((child) => child.valueIndexes.length))
           : 0,
         addedChildrenSize = axisRenderState.markSize * (addedChildrenLeavesCount + 1),
-        axisAtLocation = axisRenderState[locationType],
+        axisAtLocation = axisRenderState.location[locationType],
         axisPosition = axisAtLocation.position,
         axisLevelCount = Object.keys(axisAtLocation.axisCellMapByLevel).length
 

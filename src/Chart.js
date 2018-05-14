@@ -63,16 +63,16 @@ export default class Chart {
     // Indicate the chart has initialized
     let store = await Chart.dispatch(chartInit(this.id, this.chartConfig))
 
-    // Calculate the chart dimensions for layout
-    // TODO directly access store maybe not a good idea,
-    // Need to think how to optimize here. This is really just
-    // like a container
-    store = await Chart.dispatch(chartLayoutUpdate(this.id, {
-      xAxisHeight: store.xAxis.height,
-      yAxisWidth: store.yAxis.width,
-      chartHeight: store.chart.height,
-      chartWidth: store.chart.width
-    }))
+    // // Calculate the chart dimensions for layout
+    // // TODO directly access store maybe not a good idea,
+    // // Need to think how to optimize here. This is really just
+    // // like a container
+    // store = await Chart.dispatch(chartLayoutUpdate(this.id, {
+    //   xAxisHeight: store.xAxis.height,
+    //   yAxisWidth: store.yAxis.width,
+    //   chartHeight: store.chart.height,
+    //   chartWidth: store.chart.width
+    // }))
 
     // Now we have updated store, we need to start rendering
     // TODO: Important

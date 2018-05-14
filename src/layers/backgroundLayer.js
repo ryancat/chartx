@@ -22,16 +22,12 @@ const backgroundLayer = {
 
     return {
       // Chart position
-      chart: {
+      chart: new Position({
         top: 0,
         left: 0,
         width: store.chart.width,
         height: store.chart.height
-      },
-      // chartTop: 0,
-      // chartLeft: 0,
-      // chartWidth: store.chart.width,
-      // chartHeight: store.chart.height,
+      }),
 
       // X axis
       xAxis: backgroundLayer._getAxisRenderState(aspectTypeE.X, store, axisOffset),
@@ -62,6 +58,8 @@ const backgroundLayer = {
 
     // Aggregate number of axis levels that are at certain
     // location type. This affects the position calculation.
+    // TODO: axis label actual width or height can be calculated here
+    // if not using the levelSize
     axisOffset[locationTypeE.TOP] = _.sum(
       _.filter(xAxisLevelStates, { locationType: locationTypeE.TOP })
       .map(axisLevelState => axisLevelState.levelSize)
@@ -89,12 +87,12 @@ const backgroundLayer = {
     switch (aspectType) {
       case aspectTypeE.X:
         axisState = store.xAxis
-        mainAxisSize = store.xAxis.width
+        mainAxisSize = store.chart.width - axisOffset[locationTypeE.LEFT] - axisOffset[locationTypeE.RIGHT]
         break
 
       case aspectTypeE.Y:
         axisState = store.yAxis
-        mainAxisSize = store.yAxis.height
+        mainAxisSize = store.chart.height - axisOffset[locationTypeE.TOP] - axisOffset[locationTypeE.BOTTOM]
         break
       
       default:
@@ -109,45 +107,46 @@ const backgroundLayer = {
     let axisRenderState = {}
 
     // Compute all locations for axis
-    axisRenderState[locationTypeE.TOP] = {
+    axisRenderState.location = {}
+    axisRenderState.location[locationTypeE.TOP] = {
       position: new Position({
         top: axisOffset[locationTypeE.TOP],
         left: axisOffset[locationTypeE.LEFT],
-        width: axisState.width,
-        height: axisState.height
+        width: mainAxisSize,
+        height: axisOffset[locationTypeE.TOP]
       }),
       // The axis cell map on axis
       axisCellMapByLevel: {}
     }
 
-    axisRenderState[locationTypeE.BOTTOM] = {
+    axisRenderState.location[locationTypeE.BOTTOM] = {
       position: new Position({
         top: store.chart.height - axisOffset[locationTypeE.BOTTOM],
         left: axisOffset[locationTypeE.LEFT],
-        width: axisState.width,
-        height: axisState.height
+        width: mainAxisSize,
+        height: axisOffset[locationTypeE.BOTTOM]
       }),
       // The axis cell map on axis
       axisCellMapByLevel: {}
     }
 
-    axisRenderState[locationTypeE.LEFT] = {
+    axisRenderState.location[locationTypeE.LEFT] = {
       position: new Position({
         top: axisOffset[locationTypeE.TOP],
         left: axisOffset[locationTypeE.LEFT],
-        width: axisState.width,
-        height: axisState.height
+        width: axisOffset[locationTypeE.LEFT],
+        height: mainAxisSize
       }),
       // The axis cell map on axis
       axisCellMapByLevel: {}
     }
 
-    axisRenderState[locationTypeE.RIGHT] = {
+    axisRenderState.location[locationTypeE.RIGHT] = {
       position: new Position({
         top: axisOffset[locationTypeE.TOP],
         left: store.chart.width - axisOffset[locationTypeE.RIGHT],
-        width: axisState.width,
-        height: axisState.height
+        width: axisOffset[locationTypeE.RIGHT],
+        height: mainAxisSize
       }),
       // The axis cell map on axis
       axisCellMapByLevel: {}
