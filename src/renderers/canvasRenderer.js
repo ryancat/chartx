@@ -1,5 +1,10 @@
+import _ from 'lodash'
+
 import BaseRenderer from './BaseRenderer'
 import rendererTypeE from '../enums/rendererType'
+import locationTypeE from '../enums/locationType'
+import directionTypeE from '../enums/directionType'
+import theme from '../theme'
 // import sceneRenderer from './sceneRenderer'
 
 export default class CanvasRenderer extends BaseRenderer {
@@ -62,54 +67,74 @@ export default class CanvasRenderer extends BaseRenderer {
         let axisCellsInSameLevel = location.axisCellMapByLevel[axisCellLevel]
 
         for (let axisCell of axisCellsInSameLevel) {
+          // Draw the rect to make sure we are rendering in correct position
+          // TODO: remove this
           this.drawRect(context, axisCell.position)
+
+          // Draw axis title
+          this.renderTextUnit(axisCell.titleUnit)
+
+          // Draw axis labels
+          for (let labelUnit of axisCell.labelUnits) {
+            this.renderTextUnit(labelUnit)
+          }
         }
         // this.drawRect(context, location.position)
       }
     }
   }
 
-  /**
-   * Render the x axis
-   * @param {Object} renderState the render state renderer will render
-   */
-  renderXAxis (renderState) {
-    console.log('renderState', renderState)
-    let xAxisRenderState = renderState.xAxis
-    if (!xAxisRenderState) {
-      // No x axis to render
-      return
-    }
-
-    // Use xAxisRenderState.rootAxisCell to render all axis cells
-
+  renderTextUnit (textUnit) {
     let context = this.element.getContext('2d')
-    // Render the x axis line
-    context.beginPath()
-    context.moveTo(xAxisRenderState.left, xAxisRenderState.top)
-    context.lineTo(xAxisRenderState.left + xAxisRenderState.width, xAxisRenderState.top)
-    context.stroke()
-
-    // Render ticks
+    console.log(Object.assign({}, theme.axis[textUnit.type], textUnit.fontOptions))
+    this.drawText(
+      context, 
+      textUnit.content, 
+      textUnit.position, 
+      Object.assign({}, theme.axis[textUnit.type], textUnit.fontOptions))
   }
 
-  /**
-   * Render the y axis
-   * @param {Object} renderState the render state renderer will render
-   */
-  renderYAxis (renderState) {
-    let yAxisRenderState = renderState.yAxis
-    if (!yAxisRenderState) {
-      // No y axis to render
-      return
-    }
+  // /**
+  //  * Render the x axis
+  //  * @param {Object} renderState the render state renderer will render
+  //  */
+  // renderXAxis (renderState) {
+  //   console.log('renderState', renderState)
+  //   let xAxisRenderState = renderState.xAxis
+  //   if (!xAxisRenderState) {
+  //     // No x axis to render
+  //     return
+  //   }
+
+  //   // Use xAxisRenderState.rootAxisCell to render all axis cells
+
+  //   let context = this.element.getContext('2d')
+  //   // Render the x axis line
+  //   context.beginPath()
+  //   context.moveTo(xAxisRenderState.left, xAxisRenderState.top)
+  //   context.lineTo(xAxisRenderState.left + xAxisRenderState.width, xAxisRenderState.top)
+  //   context.stroke()
+
+  //   // Render ticks
+  // }
+
+  // /**
+  //  * Render the y axis
+  //  * @param {Object} renderState the render state renderer will render
+  //  */
+  // renderYAxis (renderState) {
+  //   let yAxisRenderState = renderState.yAxis
+  //   if (!yAxisRenderState) {
+  //     // No y axis to render
+  //     return
+  //   }
     
-    let context = this.element.getContext('2d')
-    context.beginPath()
-    context.moveTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top)
-    context.lineTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top + yAxisRenderState.height)
-    context.stroke()
-  }
+  //   let context = this.element.getContext('2d')
+  //   context.beginPath()
+  //   context.moveTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top)
+  //   context.lineTo(yAxisRenderState.left + yAxisRenderState.width, yAxisRenderState.top + yAxisRenderState.height)
+  //   context.stroke()
+  // }
 
   /**
    * Draw a rect with given context and position
@@ -124,5 +149,51 @@ export default class CanvasRenderer extends BaseRenderer {
   drawRect (context, position) {
     const {top, left, width, height} = position
     context.strokeRect(left, top, width, height)
+  }
+
+  /**
+   * Draw text in canvas context
+   * 
+   * @param {CanvasRenderingContext2D} context 
+   * @param {String} content the text content to draw
+   * @param {Position} position the position to draw text
+   * @param {Object} [fontOptions={}] optional font options
+   * @memberof CanvasRenderer
+   */
+  drawText (context, content, position, fontOptions = {}) {
+    const {top, left, width, height} = position,
+          fontOptionOrder = [
+            'fontStyle', 'fontVariant', 'fontWeight',
+            'fontSize', 'lineHeight', 'fontFamily'
+          ]
+
+    let font = ''
+    for (let fontOption of fontOptionOrder) {
+      font += ` ${fontOptions[fontOption] || ''}`
+    }
+
+    // Start draw
+    context.save()
+    context.textAlign = fontOptions.textAlign || 'center'
+    context.textBaseline = fontOptions.textBaseline || 'middle'
+    context.font = font
+    if (fontOptions.directionType === directionTypeE.VERTICAL) {
+      // Need to rotate text
+      
+      context.translate(left + width / 2, top + height / 2)
+      context.rotate(-Math.PI / 2)
+      context.fillText(content, 0, 0)
+    }
+    else {
+      context.fillText(content, left + width / 2, top + height / 2)
+    }
+    context.restore()
+
+    // TODO: For debug only
+    context.save()
+    context.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
+    context.globalAlpha = 0.5
+    context.fillRect(left, top, width, height)
+    context.restore()
   }
 }

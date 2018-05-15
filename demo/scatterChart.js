@@ -52,9 +52,9 @@ const chartConfig = {
     }
   ],
   // The outer width of chart
-  width: 400,
+  width: 500,
   // The outer height of chart
-  height: 400,
+  height: 500,
   // The renderer to use for rendering API
   // TODO: Need to figure out a way to support different renderer in eacy layer
   rendererType: rendererType.CANVAS,

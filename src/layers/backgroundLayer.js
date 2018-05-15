@@ -3,7 +3,7 @@ import locationTypeE from '../enums/locationType'
 import Position from '../components/Position'
 // import Tree from '../components/Tree'
 // import AxisHeader from '../components/AxisHeader'
-import AxisCell from '../components/AxisCell2'
+import AxisCell from '../components/AxisCell'
 import theme from '../theme'
 
 const backgroundLayer = {
