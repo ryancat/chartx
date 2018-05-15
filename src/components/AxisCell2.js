@@ -87,7 +87,8 @@ export default class AxisCell {
         levelState,
         // TODO: try simplify this with bitwise operation
         valueIndexes,
-        position: AxisCell.getAxisCellPosition(rootCell, levelState, axisRenderState),
+        // position: AxisCell.getAxisCellPosition(rootCell, levelState, valueIndexes, axisRenderState),
+        position: AxisCell.getAxisCellPosition2(rootCell, levelStates, level, valueIndexes, axisRenderState),
         markSize: axisRenderState.markSize
       })
 
@@ -115,7 +116,8 @@ export default class AxisCell {
       let childNode = new AxisCell({
         levelState,
         valueIndexes: indexMap[indexKey],
-        position: AxisCell.getAxisCellPosition(rootCell, levelState, axisRenderState),
+        // position: AxisCell.getAxisCellPosition(rootCell, levelState, indexMap[indexKey], axisRenderState),
+        position: AxisCell.getAxisCellPosition2(rootCell, levelStates, level, indexMap[indexKey], axisRenderState),
         markSize: axisRenderState.markSize
       })
 
@@ -138,15 +140,16 @@ export default class AxisCell {
    * Calculate the cell position offset based on parent top left position
    * @param {AxisCell} parentAxisCell the parent axis cell to get children information for offset
    * @param {Object} levelState the axis cell level state
+   * @param {Number} valueIndexes the value indexes used in this cell from level state
    * @param {Object} axisRenderState axis render state
    */
-  static getAxisCellPosition (parentAxisCell, levelState, axisRenderState) {
+  static getAxisCellPosition (parentAxisCell, levelState, valueIndexes, axisRenderState) {
     const locationType = levelState.locationType
     let axisCellPosition,
         addedChildrenLeavesCount = parentAxisCell ? 
           _.sum(parentAxisCell.children.map((child) => child.valueIndexes.length))
           : 0,
-        addedChildrenSize = axisRenderState.markSize * (addedChildrenLeavesCount + 1),
+        addedChildrenSize = axisRenderState.markSize * addedChildrenLeavesCount,
         axisAtLocation = axisRenderState.location[locationType],
         axisPosition = axisAtLocation.position,
         axisLevelCount = Object.keys(axisAtLocation.axisCellMapByLevel).length
@@ -155,28 +158,36 @@ export default class AxisCell {
       case locationTypeE.BOTTOM:
         axisCellPosition = {
           top: axisPosition.top + axisPosition.height - levelState.levelSize * (axisLevelCount + 1),
-          left: axisPosition.left + addedChildrenSize
+          left: axisPosition.left + addedChildrenSize,
+          width: axisRenderState.markSize * valueIndexes.length,
+          height: levelState.levelSize
         }
         break
 
       case locationTypeE.TOP:
         axisCellPosition = {
-          top: levelState.levelSize * axisLevelCount,
-          left: axisPosition.left + addedChildrenSize
+          top: axisPosition.top + levelState.levelSize * axisLevelCount,
+          left: axisPosition.left + addedChildrenSize,
+          width: axisRenderState.markSize * valueIndexes.length,
+          height: levelState.levelSize
         }
         break
         
       case locationTypeE.LEFT:
         axisCellPosition = {
           top: axisPosition.top + addedChildrenSize,
-          left: levelState.levelSize * axisLevelCount
+          left: axisPosition.left + levelState.levelSize * axisLevelCount,
+          width: levelState.levelSize,
+          height: axisRenderState.markSize * valueIndexes.length
         }
         break
 
       case locationTypeE.RIGHT:
         axisCellPosition = {
           top: axisPosition.top + addedChildrenSize,
-          left: axisPosition.left + axisPosition.width - levelState.levelSize * (axisLevelCount + 1)
+          left: axisPosition.left + axisPosition.width - levelState.levelSize * (axisLevelCount + 1),
+          width: levelState.levelSize,
+          height: axisRenderState.markSize * valueIndexes.length
         }
         break
 
@@ -185,6 +196,76 @@ export default class AxisCell {
     }
 
     return axisCellPosition
+  }
+
+  static getAxisCellPosition2 (parentAxisCell, levelStates, level, valueIndexes, axisRenderState) {
+
+    const levelState = levelStates[level],
+          locationType = levelState.locationType,
+          axisAtLocation = axisRenderState.location[locationType],
+          axisCellMapByLevel = axisAtLocation.axisCellMapByLevel,
+          axisPosition = axisAtLocation.position,
+          addedChildrenLeavesCount = parentAxisCell ? 
+            _.sum(parentAxisCell.children.map((child) => child.valueIndexes.length))
+            : 0,
+          addedChildrenSize = axisRenderState.markSize * addedChildrenLeavesCount
+
+    let axisLevel = Object.keys(axisCellMapByLevel).indexOf(level.toString())
+    axisLevel = axisLevel >= 0 ? axisLevel : Object.keys(axisCellMapByLevel).length
+    
+    // let axisCellPosition,
+    //     addedChildrenLeavesCount = parentAxisCell ? 
+    //       _.sum(parentAxisCell.children.map((child) => child.valueIndexes.length))
+    //       : 0,
+    //     addedChildrenSize = axisRenderState.markSize * addedChildrenLeavesCount,
+    //     axisAtLocation = axisRenderState.location[locationType],
+    //     axisPosition = axisAtLocation.position,
+    //     axisLevelCount = Object.keys(axisAtLocation.axisCellMapByLevel).length
+
+    let axisCellPosition
+    switch(locationType) {
+      case locationTypeE.BOTTOM:
+        axisCellPosition = {
+          top: axisPosition.top + axisPosition.height - levelState.levelSize * (axisLevel + 1),
+          left: (parentAxisCell ? parentAxisCell.position : axisPosition).left + addedChildrenSize,
+          width: axisRenderState.markSize * valueIndexes.length,
+          height: levelState.levelSize
+        }
+        break
+
+      case locationTypeE.TOP:
+        axisCellPosition = {
+          top: axisPosition.top + levelState.levelSize * axisLevel,
+          left: (parentAxisCell ? parentAxisCell.position : axisPosition).left + addedChildrenSize,
+          width: axisRenderState.markSize * valueIndexes.length,
+          height: levelState.levelSize
+        }
+        break
+        
+      case locationTypeE.LEFT:
+        axisCellPosition = {
+          top: (parentAxisCell ? parentAxisCell.position : axisPosition).top + addedChildrenSize,
+          left: axisPosition.left + levelState.levelSize * axisLevel,
+          width: levelState.levelSize,
+          height: axisRenderState.markSize * valueIndexes.length
+        }
+        break
+
+      case locationTypeE.RIGHT:
+        axisCellPosition = {
+          top: (parentAxisCell ? parentAxisCell.position : axisPosition).top + addedChildrenSize,
+          left: axisPosition.left + axisPosition.width - levelState.levelSize * (axisLevel + 1),
+          width: levelState.levelSize,
+          height: axisRenderState.markSize * valueIndexes.length
+        }
+        break
+
+      default:
+        throw new Error('Missing location type information for axis cell')
+    }
+
+    return axisCellPosition
+
   }
 
   /**

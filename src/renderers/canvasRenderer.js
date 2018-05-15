@@ -15,9 +15,11 @@ export default class CanvasRenderer extends BaseRenderer {
    */
   render (renderState) {
     this.initCanvas(renderState)
-    this.renderXAxis(renderState)
-    this.renderYAxis(renderState)
-    this.renderYAxis(renderState)
+    this.renderAxis(renderState.xAxis)
+    this.renderAxis(renderState.yAxis)
+    // this.renderXAxis(renderState)
+    // this.renderYAxis(renderState)
+    // this.renderYAxis(renderState)
   }
 
   initCanvas (renderState) {
@@ -50,8 +52,21 @@ export default class CanvasRenderer extends BaseRenderer {
       return
     }
 
-    // const rootAxisCell = axisRenderState.rootAxisCell
+    let context = this.element.getContext('2d')
 
+    // Render all locations for axis
+    for (let locationType in axisRenderState.location) {
+      let location = axisRenderState.location[locationType]
+
+      for (let axisCellLevel in location.axisCellMapByLevel) {
+        let axisCellsInSameLevel = location.axisCellMapByLevel[axisCellLevel]
+
+        for (let axisCell of axisCellsInSameLevel) {
+          this.drawRect(context, axisCell.position)
+        }
+        // this.drawRect(context, location.position)
+      }
+    }
   }
 
   /**
@@ -97,9 +112,17 @@ export default class CanvasRenderer extends BaseRenderer {
   }
 
   /**
-   * Render scene
-   * @param {Object} renderState the render state renderer will render
+   * Draw a rect with given context and position
+   * 
+   * @param {CanvasRenderingContext2D} context 
+   * @param {Position} position the position object
+   * @param {Number} position.x x position
+   * @param {Number} position.y y position
+   * @param {Number} position.width width size
+   * @param {Number} position.height height size
    */
-  renderScene (renderState) {
+  drawRect (context, position) {
+    const {top, left, width, height} = position
+    context.strokeRect(left, top, width, height)
   }
 }

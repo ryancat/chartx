@@ -110,7 +110,7 @@ const backgroundLayer = {
     axisRenderState.location = {}
     axisRenderState.location[locationTypeE.TOP] = {
       position: new Position({
-        top: axisOffset[locationTypeE.TOP],
+        top: 0,
         left: axisOffset[locationTypeE.LEFT],
         width: mainAxisSize,
         height: axisOffset[locationTypeE.TOP]
@@ -133,7 +133,7 @@ const backgroundLayer = {
     axisRenderState.location[locationTypeE.LEFT] = {
       position: new Position({
         top: axisOffset[locationTypeE.TOP],
-        left: axisOffset[locationTypeE.LEFT],
+        left: 0,
         width: axisOffset[locationTypeE.LEFT],
         height: mainAxisSize
       }),
