@@ -1,6 +1,7 @@
 import uuidv1 from 'uuid/v1'
 
 import { chartInit, chartLayoutUpdate } from './actions/chartAction'
+import { storeUpdate } from './actions/storeAction'
 import layerTypeE from './enums/layerType'
 import rendererTypeE from './enums/rendererType'
 import Layer from './layers/Layer'
@@ -63,6 +64,15 @@ export default class Chart {
     // Indicate the chart has initialized
     let store = await Chart.dispatch(chartInit(this.id, this.chartConfig))
 
+    // TODO: we can calculate the tree map for axis and marks before
+    // sending out the action for store update, so that the same logic
+    // only got calculated once
+    let finalRenderStore = await Chart.dispatchRender(storeUpdate(this.id, store))
+
+    // Once we get final render state, we will pass that to each layer so they
+    // know that needs to be rendered on the next animation frame
+
+
     // // Calculate the chart dimensions for layout
     // // TODO directly access store maybe not a good idea,
     // // Need to think how to optimize here. This is really just
@@ -87,17 +97,17 @@ export default class Chart {
     // state to each layer, and wait until CRS is coming back.
 
     // update the chart with current store
-    await this.update(store)
-    // this.render()
+    await this.update(finalRenderStore, store)
   }
 
   /**
-   * Update the chart with store
+   * Update the chart with finalRenderStore
    * 
+   * @param {Object} finalRenderStore 
    * @param {Object} store 
    * @memberof Chart
    */
-  async update (store) {
+  async update (finalRenderStore, store) {
     // TODO: we need to compute the necessary data before sending them to each layer, so that
     // they can be shared and not need to compute inside the layer
     // Each layer should only need to calculate render state for that layer
@@ -106,21 +116,18 @@ export default class Chart {
 
     // First need to compute the axis cells in tree structure
     // Chart.dispatch(chartRender(this.id))
-    await this.updateLayers(store)
+    await this.updateLayers(finalRenderStore, store)
   }
 
   /**
    * Update all layers to compute final render states
+   * 
+   * @param {Object} finalRenderState 
+   * @param {Object} store 
+   * @memberof Chart
    */
-  async updateLayers (store) {
-    // return {
-    //   renderer: rendererTypeE.CANVAS,
-    //   chartElement: this.element,
-    //   width: store.chart.width,
-    //   height: store.chart.height
-    // }
-
-    await this._eachLayerAsync(async (layer) => await layer.update(store))
+  async updateLayers (finalRenderState, store) {
+    await this._eachLayerAsync(async (layer) => await layer.update(finalRenderState, store))
   }
 
   /**

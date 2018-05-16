@@ -1,7 +1,9 @@
-export const STORE_REFRESH = 'STORE_REFRESH'
+export const STORE_UPDATE = 'STORE_UPDATE'
 
-export function storeRefresh () {
+export function storeUpdate (chartId, store) {
   return {
-    type: STORE_REFRESH
+    type: STORE_UPDATE,
+    chartId,
+    store
   }
 }

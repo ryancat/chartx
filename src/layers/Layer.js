@@ -47,9 +47,10 @@ export default class Layer {
 
   /**
    * Update layer renderer and final render state
-   * @param {Object|Array} store the chart data state
+   * @param {Object|Array} finalRenderStore the chart final render store
+   * @param {Object|Array} store the chart data store
    */
-  update (store) {
+  update (finalRenderStore, store) {
     const expectedRendererType = store.chart.rendererType
     // Set renderer
     if (!this.renderer) {
@@ -61,8 +62,8 @@ export default class Layer {
       throw new Error('Do not support update renderer after created for now')
     }
 
-    // Compute final render state
-    this.finalRenderState = this._computeFinalRenderState(store)
+    // Compute final render state for this layer
+    this.finalRenderState = this._computeFinalRenderState(finalRenderStore)
   }
 
   isRenderDone () {
@@ -87,13 +88,13 @@ export default class Layer {
   /**
    * Compute and return the final render state
    * This function could run in child process or web worker
-   * @param {Object|Array} store the chart state
+   * @param {Object|Array} finalRenderStore the final render store
    */
-  _computeFinalRenderState (store) {
+  _computeFinalRenderState (finalRenderStore) {
     if (!layerMap[this.type]) {
       throw new Error(`Unexpected layer to work with: ${this.type}`)
     }
 
-    return layerMap[this.type].computeFinalRenderState(store)
+    return layerMap[this.type].computeFinalRenderState(finalRenderStore)
   }
  }

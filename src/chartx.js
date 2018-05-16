@@ -3,7 +3,8 @@
 import 'regenerator-runtime/runtime'
 import uuidv1 from 'uuid/v1'
 
-import reducerMap from './reducers/index'
+import reducerMap from './dataReducers/index'
+import renderReducerMap from './renderReducers/index'
 import {combineReducer, createStore} from './stateManager'
 import Chart from './Chart'
 import enums from './enums/index'
@@ -53,8 +54,12 @@ const chartx = {
     // Create store for all states
     chartx.store = await createStore(combineReducer(reducerMap))
 
+    // Create store for all final render states
+    chartx.renderStore = await createStore(combineReducer(renderReducerMap))
+
     // Static function for all charts
     Chart.dispatch = chartx.store.dispatch
+    Chart.dispatchRender = chartx.renderStore.dispatch
 
     // Start animation loop for rendering
     chartx.loop()
