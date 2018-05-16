@@ -63,13 +63,6 @@ export default class Layer {
 
     // Compute final render state
     this.finalRenderState = this._computeFinalRenderState(store)
-    
-    return {
-      renderer: store.chart.renderer,
-      chartElement: this.container,
-      width: store.chart.width,
-      height: store.chart.height
-    }
   }
 
   isRenderDone () {

@@ -41,25 +41,20 @@ export default {
         }
 
         if (aspect.dataType === dataTypeE.NUMBER) {
-          // Agregate aspect values when they are number type
-          aspectState.min = _.min(aspect.values)
-          aspectState.max = _.max(aspect.values)
-
-          if (aspectState.includeZero) {
-            // Need to consider zero
-            aspectState.min = Math.min(aspectState.min, 0)
-            aspectState.max = Math.max(0, aspectState.max)
-          }
+          // if (store.includeZero) {
+          //   // Need to consider zero
+          //   aspectState.min = Math.min(aspectState.min, 0)
+          //   aspectState.max = Math.max(0, aspectState.max)
+          // }
+          aspectState.includeZero = !!aspect.includeZero
         }
         else {
-          if (typeof aspectState.values[0] !== 'number') {
-            // When the values are not numbers, assume them are
-            // real values. In this case we will convert values
-            // to index to valueOrder for performance purpose
-            // 
-            // TODO: Even better if we could use bit values
-            aspectState.values = aspectState.values.map((value) => aspectState.valueOrder.indexOf(value))
-          }
+          // When the values are not numbers, assume them are
+          // real values. In this case we will convert values
+          // to index to valueOrder for performance purpose
+          // 
+          // TODO: Even better if we could use bit values
+          aspectState.values = aspectState.values.map((value) => aspectState.valueOrder.indexOf(value))
         }
 
         // Calculate axis level size

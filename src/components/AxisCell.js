@@ -240,23 +240,54 @@ export default class AxisCell {
           }
         })
         
-        // Calculate label positions
-        labelUnits = this.valueIndexes.map((valueIndex, indexOfvalueIndex) => {
-          const valueOrder = this.levelState.valueOrder,
-                label = valueOrder ? valueOrder[this.levelState.values[valueIndex]] : this.levelState.values[valueIndex]
-          return new Unit(label, new Position({
-            top: this.position.top,
-            left: this.position.left + indexOfvalueIndex * this.markSize,
-            width: this.markSize,
-            height: this.levelState.labelSize
-          }), 
-          unitTypeE.LABEL, {
-            fontOptions: {
-              fontSize: this.levelState.labelSize + 'px',
-              directionType: directionTypeE.HORIZONTAL
-            }
+        // Calculate label positions for categorical data
+        const valueOrder = this.levelState.valueOrder
+        if (valueOrder) {
+          // Axis is categorical
+          // Create a map of value indexes to map
+          // values index to the value index's index
+          const valueIndexMap = _.groupBy(this.valueIndexes, (i) => this.levelState.values[i])
+          let markOffset = 0
+          labelUnits = Object.keys(valueIndexMap).map((cellValueIndex) => {
+            const label = valueOrder[cellValueIndex],
+                  unit = new Unit(label, new Position({
+                    top: this.position.top,
+                    left: this.position.left + markOffset,
+                    width: this.markSize,
+                    height: this.levelState.labelSize
+                  }), 
+                  unitTypeE.LABEL, {
+                    fontOptions: {
+                      fontSize: this.levelState.labelSize + 'px',
+                      directionType: directionTypeE.HORIZONTAL
+                    }
+                  })
+            markOffset += valueIndexMap[cellValueIndex].length * this.markSize
+            return unit            
           })
-        })
+        }
+        else {
+          // Axis is quantitative
+          // We need to create numbers to show range of axis
+          
+        }
+
+        // labelUnits = this.valueIndexes.map((valueIndex, indexOfvalueIndex) => {
+        //   const valueOrder = this.levelState.valueOrder,
+        //         label = valueOrder ? valueOrder[this.levelState.values[valueIndex]] : this.levelState.values[valueIndex]
+        //   return new Unit(label, new Position({
+        //     top: this.position.top,
+        //     left: this.position.left + indexOfvalueIndex * this.markSize,
+        //     width: this.markSize,
+        //     height: this.levelState.labelSize
+        //   }), 
+        //   unitTypeE.LABEL, {
+        //     fontOptions: {
+        //       fontSize: this.levelState.labelSize + 'px',
+        //       directionType: directionTypeE.HORIZONTAL
+        //     }
+        //   })
+        // })
         break
 
       case locationTypeE.TOP:

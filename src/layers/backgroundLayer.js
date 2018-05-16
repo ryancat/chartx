@@ -81,18 +81,65 @@ const backgroundLayer = {
   },
 
   _getAxisRenderState: (aspectType, store, axisOffset) => {
-    let axisState,
+    let axisRenderState = {},
+        axisState,
         mainAxisSize
 
+    // Compute all locations for axis
+    axisRenderState.location = {}
     switch (aspectType) {
       case aspectTypeE.X:
         axisState = store.xAxis
         mainAxisSize = store.chart.width - axisOffset[locationTypeE.LEFT] - axisOffset[locationTypeE.RIGHT]
+
+        axisRenderState.location[locationTypeE.TOP] = {
+          position: new Position({
+            top: 0,
+            left: axisOffset[locationTypeE.LEFT],
+            width: mainAxisSize,
+            height: axisOffset[locationTypeE.TOP]
+          }),
+          // The axis cell map on axis
+          axisCellMapByLevel: {}
+        }
+    
+        axisRenderState.location[locationTypeE.BOTTOM] = {
+          position: new Position({
+            top: store.chart.height - axisOffset[locationTypeE.BOTTOM],
+            left: axisOffset[locationTypeE.LEFT],
+            width: mainAxisSize,
+            height: axisOffset[locationTypeE.BOTTOM]
+          }),
+          // The axis cell map on axis
+          axisCellMapByLevel: {}
+        }
         break
 
       case aspectTypeE.Y:
         axisState = store.yAxis
         mainAxisSize = store.chart.height - axisOffset[locationTypeE.TOP] - axisOffset[locationTypeE.BOTTOM]
+
+        axisRenderState.location[locationTypeE.LEFT] = {
+          position: new Position({
+            top: axisOffset[locationTypeE.TOP],
+            left: 0,
+            width: axisOffset[locationTypeE.LEFT],
+            height: mainAxisSize
+          }),
+          // The axis cell map on axis
+          axisCellMapByLevel: {}
+        }
+    
+        axisRenderState.location[locationTypeE.RIGHT] = {
+          position: new Position({
+            top: axisOffset[locationTypeE.TOP],
+            left: store.chart.width - axisOffset[locationTypeE.RIGHT],
+            width: axisOffset[locationTypeE.RIGHT],
+            height: mainAxisSize
+          }),
+          // The axis cell map on axis
+          axisCellMapByLevel: {}
+        }
         break
       
       default:
@@ -102,54 +149,6 @@ const backgroundLayer = {
     if (axisState.isHidden) {
       // When x axis is hidden, the render state is null
       return null
-    }
-
-    let axisRenderState = {}
-
-    // Compute all locations for axis
-    axisRenderState.location = {}
-    axisRenderState.location[locationTypeE.TOP] = {
-      position: new Position({
-        top: 0,
-        left: axisOffset[locationTypeE.LEFT],
-        width: mainAxisSize,
-        height: axisOffset[locationTypeE.TOP]
-      }),
-      // The axis cell map on axis
-      axisCellMapByLevel: {}
-    }
-
-    axisRenderState.location[locationTypeE.BOTTOM] = {
-      position: new Position({
-        top: store.chart.height - axisOffset[locationTypeE.BOTTOM],
-        left: axisOffset[locationTypeE.LEFT],
-        width: mainAxisSize,
-        height: axisOffset[locationTypeE.BOTTOM]
-      }),
-      // The axis cell map on axis
-      axisCellMapByLevel: {}
-    }
-
-    axisRenderState.location[locationTypeE.LEFT] = {
-      position: new Position({
-        top: axisOffset[locationTypeE.TOP],
-        left: 0,
-        width: axisOffset[locationTypeE.LEFT],
-        height: mainAxisSize
-      }),
-      // The axis cell map on axis
-      axisCellMapByLevel: {}
-    }
-
-    axisRenderState.location[locationTypeE.RIGHT] = {
-      position: new Position({
-        top: axisOffset[locationTypeE.TOP],
-        left: store.chart.width - axisOffset[locationTypeE.RIGHT],
-        width: axisOffset[locationTypeE.RIGHT],
-        height: mainAxisSize
-      }),
-      // The axis cell map on axis
-      axisCellMapByLevel: {}
     }
 
     // All used for calculating position information for axis cells
@@ -162,6 +161,8 @@ const backgroundLayer = {
       levelStates: axisState.axisLevels,
       axisRenderState
     })
+
+    // axisRenderState.
 
     return axisRenderState
   }

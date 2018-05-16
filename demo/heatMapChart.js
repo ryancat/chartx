@@ -29,18 +29,11 @@ const chartConfig = {
     },
     {
       aspect: aspectType.Y,
-      title: 'Number sold',
-      dataType: dataType.NUMBER,
-      values: [100, 30, 67, 103, 10, 150, 12, 37, 52, 79, 99, 137],
-      locationType: locationType.LEFT,
-      includeZero: true
-    },
-    {
-      aspect: aspectType.COLOR,
-      title: 'Color',
+      title: 'Store',
       dataType: dataType.STRING,
-      values: ['Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue'],
-      valueOrder: ['Red', 'Blue']
+      values: ['B', 'A', 'C', 'A', 'A', 'B', 'A', 'B', 'A', 'C', 'A', 'C'],
+      valueOrder: ['A', 'B', 'C', 'D'],
+      locationType: locationType.LEFT
     }
   ],
   // The outer width of chart

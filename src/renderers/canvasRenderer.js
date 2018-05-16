@@ -35,7 +35,6 @@ export default class CanvasRenderer extends BaseRenderer {
 
       canvas.setAttribute('width', chartRenderState.width)
       canvas.setAttribute('height', chartRenderState.height)
-      canvas.style.position = 'absolute'
 
       this.element = canvas
       this.container.appendChild(this.element)
@@ -86,7 +85,6 @@ export default class CanvasRenderer extends BaseRenderer {
 
   renderTextUnit (textUnit) {
     let context = this.element.getContext('2d')
-    console.log(Object.assign({}, theme.axis[textUnit.type], textUnit.fontOptions))
     this.drawText(
       context, 
       textUnit.content, 

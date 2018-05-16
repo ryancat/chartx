@@ -86,13 +86,31 @@ export default class Chart {
     // logic to compute FRS. Chart should trigger this process by dispatch the data
     // state to each layer, and wait until CRS is coming back.
 
-    // Chart.dispatch(chartRender(this.id))
-    await this.updateLayers(store)
+    // update the chart with current store
+    await this.update(store)
     // this.render()
   }
 
   /**
-   * Update all layers with current chart state
+   * Update the chart with store
+   * 
+   * @param {Object} store 
+   * @memberof Chart
+   */
+  async update (store) {
+    // TODO: we need to compute the necessary data before sending them to each layer, so that
+    // they can be shared and not need to compute inside the layer
+    // Each layer should only need to calculate render state for that layer
+    
+
+
+    // First need to compute the axis cells in tree structure
+    // Chart.dispatch(chartRender(this.id))
+    await this.updateLayers(store)
+  }
+
+  /**
+   * Update all layers to compute final render states
    */
   async updateLayers (store) {
     // return {
