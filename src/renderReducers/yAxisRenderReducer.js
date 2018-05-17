@@ -10,7 +10,7 @@ const defaultState = {
   mainAxisSize: null,
   markSize: null,
   rootAxisCell: null,
-  leafUnits: []
+  markRecords: []
 }
 
 export default (state = defaultState, action) => {

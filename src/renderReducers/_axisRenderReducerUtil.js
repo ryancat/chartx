@@ -82,12 +82,12 @@ const axisRenderReducerUtil = {
 
       // All used for calculating position information for axis cells
       draftState.mainAxisSize = mainAxisSize
-      draftState.markSize = Math.max(theme.axis.mark.minSize, mainAxisSize / axisState.axisLevels[0].values.length)
+      draftState.markSize = Math.max(theme.axis.mark.minSize, mainAxisSize / axisState.aspectsMap[aspectType][0].values.length)
 
       // Compute x axis header cell (in tree structure)
       draftState.rootAxisCell = AxisCell.buildTree({
         // level states will be used by reference. Should not be mutated.
-        levelStates: axisState.axisLevels,
+        levelStates: axisState.aspectsMap[aspectType],
         axisRenderState: draftState
       })
     })
@@ -95,8 +95,8 @@ const axisRenderReducerUtil = {
 
   _getAxisOffset: (store) => {
     let axisOffset = {},
-        xAxisLevelStates = store.xAxis.axisLevels,
-        yAxisLevelStates = store.yAxis.axisLevels
+        xAxisLevelStates = store.xAxis.aspectsMap[aspectTypeE.X],
+        yAxisLevelStates = store.yAxis.aspectsMap[aspectTypeE.Y]
 
     // Aggregate number of axis levels that are at certain
     // location type. This affects the position calculation.

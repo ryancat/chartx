@@ -39,7 +39,7 @@ const chartConfig = {
       aspect: aspectType.COLOR,
       title: 'Color',
       dataType: dataType.STRING,
-      values: ['Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue'],
+      values: ['Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue', 'Red', 'Blue'],
       valueOrder: ['Red', 'Blue']
     }
   ],
@@ -50,6 +50,7 @@ const chartConfig = {
   // The renderer to use for rendering API
   // TODO: Need to figure out a way to support different renderer in eacy layer
   rendererType: rendererType.CANVAS,
+
   // If truthy will show default control panel
   enableDefaultControls: true
 }

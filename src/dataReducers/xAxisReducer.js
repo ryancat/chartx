@@ -8,19 +8,18 @@ import _axisReducerUtil from './_axisReducerUtil'
 
 const defaultState = {
   zoom: 1,
-  isHidden: false
+  isHidden: false,
+  aspectsMap: {}
 }
 
 export default (state = defaultState, action) => {
   switch (action.type) {
 
     case CHART_INIT:
-      return _axisReducerUtil.chartInit(state, {
-        aspects: action.chartConfig.aspects,
-        chartWidth: action.chartConfig.width,
-        chartHeight: action.chartConfig.height,
-        aspectType: aspectTypeE.X
-      })
+      const allAspects = action.chartConfig.aspects
+      let aspectMap = {}
+      aspectMap[aspectTypeE.X] = _.filter(allAspects, { aspect: aspectTypeE.X })
+      return _axisReducerUtil.chartInit(state, aspectMap)
 
     case CHART_LAYOUT_UPDATE:
       // We need to calculate the chart component dimensions
