@@ -20,19 +20,14 @@ const backgroundLayer = {
 
     return {
       // Chart position
-      chart: new Position({
-        top: 0,
-        left: 0,
-        width: finalRenderStore.chart.width,
-        height: finalRenderStore.chart.height
-      }),
+      chart: finalRenderStore.chart,
 
       // X axis
       xAxis: finalRenderStore.xAxis,
 
       // Y axis position
       yAxis: finalRenderStore.yAxis,
-      
+
       // Scene position
       // sceneTop: 0,
       // sceneLeft: store.yAxis.width,

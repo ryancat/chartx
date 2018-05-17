@@ -5,6 +5,8 @@ import rendererTypeE from '../enums/rendererType'
 import locationTypeE from '../enums/locationType'
 import directionTypeE from '../enums/directionType'
 import theme from '../theme'
+import aspectTypeE from '../enums/aspectType';
+import Position from '../components/Position'
 // import sceneRenderer from './sceneRenderer'
 
 export default class CanvasRenderer extends BaseRenderer {
@@ -22,6 +24,7 @@ export default class CanvasRenderer extends BaseRenderer {
     this.initCanvas(renderState)
     this.renderAxis(renderState.xAxis)
     this.renderAxis(renderState.yAxis)
+    this.renderChart(renderState)
     // this.renderXAxis(renderState)
     // this.renderYAxis(renderState)
     // this.renderYAxis(renderState)
@@ -90,6 +93,26 @@ export default class CanvasRenderer extends BaseRenderer {
       textUnit.content, 
       textUnit.position, 
       Object.assign({}, theme.axis[textUnit.type], textUnit.fontOptions))
+  }
+
+  renderChart (renderState) {
+    const { xAxis, yAxis, chart } = renderState,
+          markRecords = chart.markRecords,
+          recordLength = markRecords.length
+
+    let context = this.element.getContext('2d')
+
+    for (let i = 0; i < recordLength; i++) {
+      let markRecord = Object.assign({}, 
+        markRecords[i], xAxis.markRecords[i], yAxis.markRecords[i])
+      
+      this.drawRect(context, new Position({
+        top: markRecord[aspectTypeE.Y].position.top,
+        left: markRecord[aspectTypeE.X].position.left,
+        width: markRecord[aspectTypeE.X].position.width,
+        height: markRecord[aspectTypeE.Y].position.height
+      }))
+    }
   }
 
   // /**

@@ -85,7 +85,8 @@ export default class AxisCell {
       
       // Record the mark records for rendering state
       rootCell.valueIndexes.forEach((valueIndex, indexOfValueIndex) => {
-        axisRenderState.markRecords[valueIndex] = rootCell.markUnits[indexOfValueIndex]
+        axisRenderState.markRecords[valueIndex] = axisRenderState.markRecords[valueIndex] || {}
+        axisRenderState.markRecords[valueIndex][aspectType] = rootCell.markUnits[indexOfValueIndex]
       })
 
       // Nothing to build further
