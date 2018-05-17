@@ -106,12 +106,15 @@ export default class CanvasRenderer extends BaseRenderer {
       let markRecord = Object.assign({}, 
         markRecords[i], xAxis.markRecords[i], yAxis.markRecords[i])
       
-      this.drawRect(context, new Position({
+      const markPosition = new Position({
         top: markRecord[aspectTypeE.Y].position.top,
         left: markRecord[aspectTypeE.X].position.left,
         width: markRecord[aspectTypeE.X].position.width,
-        height: markRecord[aspectTypeE.Y].position.height
-      }))
+        height: chart.height - xAxis.location[locationTypeE.BOTTOM].position.height - markRecord[aspectTypeE.Y].position.top
+      })
+
+      this.drawRect(context, markPosition)
+      this.drawText(context, markRecord[aspectTypeE.Y].content, markPosition)
     }
   }
 

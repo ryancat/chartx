@@ -25,7 +25,7 @@ const chartConfig = {
       dataType: dataType.STRING,
       values: ['Male', 'Male','Female', 'Female', 'Male', 'Male', 'Female', 'Female', 'Male', 'Male', 'Female', 'Female'],
       valueOrder: ['Male', 'Female'],
-      locationType: locationType.TOP
+      locationType: locationType.BOTTOM
     },
     {
       aspect: aspectType.Y,

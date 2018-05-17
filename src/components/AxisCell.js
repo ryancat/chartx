@@ -308,7 +308,7 @@ export default class AxisCell {
         return unit
       })
 
-      this.markUnits = labelUnits
+      this.markUnits = markUnits
     }
     else {
       // Axis is quantitative
@@ -326,13 +326,13 @@ export default class AxisCell {
       }
 
       const cellMainSize = cellValues.length * this.markSize,
-            tickInterval = theme.axis.mark.minSize,
+            tickInterval = Math.max(theme.axis.mark.minSize, Math.ceil(range / (cellMainSize / theme.axis.mark.minSize))),
             tickCount = Math.floor(cellMainSize / tickInterval),
             distanceToValueRate = cellMainSize / range
 
       for (let i = 0; i < tickCount; i++) {
         // Render ticks
-        const label = i,
+        const label = Math.floor(i * tickInterval / distanceToValueRate),
               labelWidth = tickInterval,
               unit = new Unit(label, new Position({
                 top: this.position.top,
@@ -457,13 +457,13 @@ export default class AxisCell {
       }
 
       const cellMainSize = cellValues.length * this.markSize,
-            tickInterval = theme.axis.mark.minSize,
+            tickInterval = Math.max(theme.axis.mark.minSize, Math.ceil(range / (cellMainSize / theme.axis.mark.minSize))),
             tickCount = Math.floor(cellMainSize / tickInterval),
             distanceToValueRate = cellMainSize / range
 
       for (let i = 0; i < tickCount; i++) {
         // Render ticks
-        const label = i,
+        const label = Math.floor(i * tickInterval / distanceToValueRate),
               labelWidth = tickInterval,
               unit = new Unit(label, new Position({
                 top: this.position.top + this.position.height - this.levelState.labelSize,
@@ -589,13 +589,13 @@ export default class AxisCell {
       }
 
       const cellMainSize = cellValues.length * this.markSize,
-            tickInterval = theme.axis.mark.minSize,
+            tickInterval = Math.max(theme.axis.mark.minSize, Math.ceil(range / (cellMainSize / theme.axis.mark.minSize))),
             tickCount = Math.floor(cellMainSize / tickInterval),
             distanceToValueRate = cellMainSize / range
 
       for (let i = 0; i < tickCount; i++) {
         // Render ticks
-        const label = i,
+        const label = Math.floor(i * tickInterval / distanceToValueRate),
               labelHeight = tickInterval,
               unit = new Unit(label, new Position({
                 top: this.position.top + this.position.height - (i + 1) * labelHeight,
@@ -720,17 +720,17 @@ export default class AxisCell {
       }
 
       const cellMainSize = cellValues.length * this.markSize,
-            tickInterval = theme.axis.mark.minSize,
+            tickInterval = Math.max(theme.axis.mark.minSize, Math.ceil(range / (cellMainSize / theme.axis.mark.minSize))),
             tickCount = Math.floor(cellMainSize / tickInterval),
             distanceToValueRate = cellMainSize / range
 
       for (let i = 0; i < tickCount; i++) {
         // Render ticks
-        const label = i,
+        const label = Math.floor(i * tickInterval / distanceToValueRate),
               labelHeight = tickInterval,
               unit = new Unit(label, new Position({
                 top: this.position.top + this.position.height - (i + 1) * labelHeight,
-                left: this.position.left + this.position.width - this.levelState.labelSize,
+                left: this.position.left,
                 width: this.levelState.labelSize,
                 height: labelHeight
               }), 
@@ -750,7 +750,7 @@ export default class AxisCell {
               labelHeight = distanceToValueRate,
               unit = new Unit(label, new Position({
                 top: this.position.top + this.position.height - distanceToValueRate * (label - min),
-                left: this.position.left + this.position.width - this.levelState.labelSize,
+                left: this.position.left,
                 width: this.levelState.labelSize,
                 height: labelHeight
               }))
