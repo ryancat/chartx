@@ -14,7 +14,6 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
   switch (action.type) {
-
     case CHART_INIT:
       const allAspects = action.chartConfig.aspects
       let aspectMap = {}

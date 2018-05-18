@@ -55,7 +55,12 @@ const axisReducerUtil = {
         // to index to valueOrder for performance purpose
         // 
         // TODO: Even better if we could use bit values
-        aspectState.values = aspectState.values.map((value) => aspectState.valueOrder.indexOf(value))
+
+        // If the values are already numbers, we assume they are index
+        // of valueOrder. It'a a valid format too.
+        if (!_.isNumber(aspectState.values[0])) {
+          aspectState.values = aspectState.values.map((value) => aspectState.valueOrder.indexOf(value))
+        }
       }
 
       // Calculate axis level size

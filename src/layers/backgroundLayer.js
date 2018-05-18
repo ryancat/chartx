@@ -11,8 +11,6 @@ const backgroundLayer = {
    * Compute the final render state for given final render store
    */
   computeFinalRenderState: (finalRenderStore) => {
-    console.log('backgroundlayer computeFinalRenderState', finalRenderStore)
-
     // Here we need to do three things:
     // 1. compute the axis cell in tree nodes.
     // 2. compose map for nodeId -> node
@@ -37,8 +35,6 @@ const backgroundLayer = {
   },
 
   computeCurrentRenderState: (currentRenderState, finalRenderState, dt) => {
-    console.log('backgroundlayer computeCurrentRenderState', currentRenderState, finalRenderState, dt)
-    
     // For now, always render final render state. When introducing animation we can
     // fill in the gaps
     return finalRenderState

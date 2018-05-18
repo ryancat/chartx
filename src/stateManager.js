@@ -1,4 +1,14 @@
+import { Pool, config } from 'threads'
 import util from './util'
+
+// Create pool of workers that we are going to queue reducer logic
+// Default to the number of CPU cores
+config.set({
+  basepath: {
+    web: 'http://localhost:8080/dist'
+  }
+})
+const pool = new Pool()
 
 /**
  * Create a store which holds chart data state and utils to
@@ -68,10 +78,14 @@ export async function createStore (reducer) {
 //  * By wrapping combineReducer function, we have a chance to dynamically
 //  * add new reducers
 //  * 
-//  * @param {object} asyncReducerMap 
+//  * @param {object} reducerMap 
 //  */
-// export function createReducer (asyncReducerMap = {}) {
-//   return combineReducer({...asyncReducerMap})
+// export function createReducer (reducerMap = {}) {
+//   const reducer = combineReducer(reducerMap)
+  
+//   return async (state = {}, action = {}) => {
+//     await reducer(state, action)
+//   }
 // }
 
 /**
@@ -116,25 +130,51 @@ export function combineReducer (reducerMap = {}) {
   }
 }
 
-// export function combineRender (renderMap = {}) {
-//   return async (currentRenderState = {}, finalRenderState = {}, dt) => {
-//     let newCurrentRenderState = {}
+export function combineParallelReducer (reducerMap = {}, reducerBundlePrefix = '') {
+  return async (state = {}, action = {}) => {
+    let newState = {}
 
-//     for (let key in renderMap) {
-//       let renderFn = renderMap[key],
-//           childState = currentRenderState[key],
-//           childFinalState = finalRenderState[key]
+    let promiseQueue = []
+    for (let key in reducerMap) {
+      let reducerFn = reducerMap[key],
+          childState = state[key]
 
-//       if (util.isFunction(renderFn)) {
-//         // Compute children current render state
-//         newCurrentRenderState[key] = await renderFn(childState, childFinalState, dt)
-//       } 
-//       else {
-//         // Recursively combine nested reducer map
-//         newCurrentRenderState[key] = await combineRender(renderMap[key])(childState, childFinalState, dt)
-//       }
-//     }
+      if (util.isFunction(reducerFn)) {
+        // Create reducer function bundle to run in child process
+        // Compute children state
+        console.log('start thread')
+        promiseQueue.push(new Promise((resolve, reject) => {
+          pool.run((args, done) => {
+            // Everything here is in a child process context
+            const { state, action, reducerBundleName } = args,
+                  reducerFn = self[reducerBundleName].default
+            done(reducerFn(state, action))
+          }, [`${reducerBundlePrefix + key}.js`])
+          .send({ 
+            childState, 
+            action, 
+            reducerBundleName: reducerBundlePrefix + key })
+          .on('done', (newReducedState) => {
+            resolve(newReducedState)
+            console.log('end thread')
+          })
+          .on('error', (err) => {
+            reject(err)
+          })
+        }))
+        // newState[key] = await reducerFn(childState, action)
+      } 
+      else {
+        // Recursively combine nested reducer map
+        promiseQueue.push(combineParallelReducer(reducerMap[key], reducerBundlePrefix)(childState, action))
+      }
+    }
+    
+    const resolvedStates = (await Promise.all(promiseQueue))
+    Object.keys(reducerMap).forEach((key, keyIndex) => {
+      newState[key] = resolvedStates[keyIndex]
+    })
 
-//     return newCurrentRenderState
-//   }
-// }
+    return newState
+  }
+}

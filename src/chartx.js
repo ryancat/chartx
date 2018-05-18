@@ -5,7 +5,7 @@ import uuidv1 from 'uuid/v1'
 
 import reducerMap from './dataReducers/index'
 import renderReducerMap from './renderReducers/index'
-import {combineReducer, createStore} from './stateManager'
+import {combineParallelReducer, combineReducer, createStore} from './stateManager'
 import Chart from './Chart'
 import enums from './enums/index'
 
@@ -53,9 +53,12 @@ const chartx = {
   init: async () => {
     // Create store for all states
     chartx.store = await createStore(combineReducer(reducerMap))
+    // chartx.store = await createStore(combineParallelReducer(reducerMap, 'data_reducer_'))
+    // chartx.store = await createStore(combineReducer(reducerMap))
 
     // Create store for all final render states
     chartx.renderStore = await createStore(combineReducer(renderReducerMap))
+    // chartx.renderStore = await createStore(combineParallelReducer(renderReducerMap, 'render_reducer_'))
 
     // Static function for all charts
     Chart.dispatch = chartx.store.dispatch
